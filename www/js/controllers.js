@@ -1,4 +1,4 @@
-angular.module('app.controllers', [])
+Bebella
   
 .controller('belezaCtrl', function($scope) {
 
