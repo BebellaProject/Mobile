@@ -40,6 +40,12 @@ Bebella.config(['$stateProvider', '$urlRouterProvider',
                             }
                         }
                     })
+                    
+                    .state('recipe', {
+                        url: '/recipe/{recipeId}',
+                        templateUrl: view('recipe/index'),
+                        controller: 'RecipeIndexCtrl'
+                    });
 
                     
         }

@@ -1,0 +1,68 @@
+<ion-view title="{{recipe.name}}" id="page13" class=" ">
+    <ion-content padding="false" class=" manual-remove-top-padding has-header">
+        <div class="">
+            <img src="{{appUrl}}/{{recipe.image_path}}" width="100%" height="auto" style="display: block; margin-left: auto; margin-right: auto;">
+        </div>
+        <ion-list id="selagemCVinagreDeMa-list5" class=" ">
+            <ion-item class="item-avatar item-icon-right  " id="selagemCVinagreDeMa-list-item11">
+                <img src="{{appUrl}}/{{recipe.channel_image}}">
+                <h2>{{recipe.channel_name}}</h2>
+                <p>{{ recipe.created_at }}</p>
+                <i class="icon ion-ios-heart"></i>
+            </ion-item>
+            <div class="item item-body " id="selagemCVinagreDeMa-list-item-container1">
+                <p id="selagemCVinagreDeMa-markdown2" style="margin-top:0px;color:#000000;font-size:15px;text-align:justify;" class=" ">{{recipe.desc}}</p>
+            </div>
+            <ion-item class="item-icon-left  " id="selagemCVinagreDeMa-list-item14" href="mailto:">
+                <i class="icon ion-ios-pricetags"></i>
+                <span ng-repeat="tag in recipe.tags">
+                    {{tag.name}}
+                    <span ng-if="!$last">,</span>
+                </span>
+            </ion-item>
+        </ion-list>
+        <h3 id="selagemCVinagreDeMa-heading1" style="color:#FFFFFF;text-align:center;" class=" bm-bg-1  bm-section-title bm-color-white">Procedimento</h3>
+        <ion-list id="selagemCVinagreDeMa-list7" class=" ">
+            <ion-item ng-repeat="step in recipe.steps" class="item-thumbnail-left  " id="recipe-step-list-item{{step.order}}">
+                <img src="{{appUrl}}/{{step.image_path}}">
+                <h2>Passo {{ step.order }}</h2>
+                <p style="white-space:normal;">{{step.desc}}</p>
+            </ion-item>
+        </ion-list>
+        
+        <h3 id="selagemCVinagreDeMa-heading3" style="color:#FFFFFF;text-align:center;" class=" bm-bg-1  bm-section-title">Produtos Usados</h3>
+        <ion-list id="selagemCVinagreDeMa-list11" class=" ">
+            <ion-item ng-repeat="product in recipe.products" class="item-thumbnail-left  " id="selagemCVinagreDeMa-list-item18" ui-sref="hidratanteX">
+                <img src="{{appUrl}}/{{product.product_image}}">
+                <h2>{{product.product_name}}</h2>
+                <p style="white-space:normal;">{{product.product_desc}}</p>
+            </ion-item>
+        </ion-list>
+        <h3 id="selagemCVinagreDeMa-heading2" style="color:#FFFFFF;text-align:center;" class=" bm-bg-1  bm-section-title">Receitas Relacionadas</h3>
+        <ion-list id="selagemCVinagreDeMa-list10" class=" ">
+            <ion-item class="item-thumbnail-left  " id="selagemCVinagreDeMa-list-item9">
+                <h2>reconstrução c/ óleo de coco</h2>
+                <p style="white-space:normal;">recomendado p/ cabelo cacheados</p>
+            </ion-item>
+            <ion-item class="item-thumbnail-left  " id="selagemCVinagreDeMa-list-item13">
+                <h2>hidratação com maizena</h2>
+                <p style="white-space:normal;">hidratação bomba de brilho e maciez</p>
+            </ion-item>
+        </ion-list>
+        <h3 id="selagemCVinagreDeMa-heading6" style="color:#FFFFFF;text-align:center;" class=" bm-bg-1  bm-section-title">Comentários</h3>
+        <ion-list id="selagemCVinagreDeMa-list16" class=" ">
+            <ion-item class="item-thumbnail-left  " id="selagemCVinagreDeMa-list-item30">
+                <h2>Usuário A</h2>
+                <p style="white-space:normal;">WoW!</p>
+            </ion-item>
+            <ion-item class="item-thumbnail-left  " id="selagemCVinagreDeMa-list-item31">
+                <h2>Usuário B</h2>
+                <p style="white-space:normal;">Perfeito!</p>
+            </ion-item>
+            <ion-item class="item-thumbnail-left  " id="selagemCVinagreDeMa-list-item36">
+                <h2>Usuário C</h2>
+                <p style="white-space:normal;">Caguei...</p>
+            </ion-item>
+        </ion-list>
+    </ion-content>
+</ion-view>

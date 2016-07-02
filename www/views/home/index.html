@@ -1,18 +1,18 @@
 <ion-view title="Home" hide-back-button="true" id="page2" class=" ">
-    <ion-content padding="true" class="has-header">
-        <div class="list card bm-no-margin-top" id="beleza-card22">
-            <ion-item id="beleza-list-item8" class="  ">Selagem c/ vinagre de maçã
-                <span class="item-note">há 4 horas</span>
+    <ion-content padding="true" class="">
+        <div ng-repeat="recipe in recipes" class="list card bm-no-margin-top" id="recipe-card-{{$index}}">
+            <ion-item id="beleza-list-item8" class="  ">{{recipe.name}}
+                <span class="item-note">{{ recipe.created_at }}</span>
             </ion-item>
             <div class=" item item-image">
-                <a style="display:block;" ui-sref="selagemCVinagreDeMa">
-                    <img src="img/WgdzL2hQj6YUEqCMYJQQ_maxresdefault.jpg" width="100%" height="auto" style="display: block; margin-left: auto; margin-right: auto;">
+                <a style="display:block;" ui-sref="recipe({recipeId: {{recipe.id}}})">
+                    <img src="{{appUrl}}/{{recipe.image_path}}" width="100%" height="auto" style="display: block; margin-left: auto; margin-right: auto;">
                 </a>
             </div>
             <ion-item class="item-avatar item-icon-right  " id="beleza-list-item12">
-                <img src="img/PIjKJmpSQDizniuBnDqR_avatar-xlarge-20652.jpg">
-                <h2>isilmuyna</h2>
-                <p style="white-space:normal;">reconstrução p/ cabelos porosos!</p>
+                <img src="{{appUrl}}/{{recipe.channel_image}}">
+                <h2>{{ recipe.channel_name }}</h2>
+                <p style="white-space:normal;">{{ recipe.desc | limitTo: 15 }}</p>
                 <i class="icon ion-ios-clock"></i>
             </ion-item>
         </div>
