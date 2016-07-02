@@ -36,31 +36,21 @@ Bebella.run(function ($ionicPlatform) {
 });
 
 
-Bebella.controller('BeautyIndexCtrl', ['$scope',
-    function ($scope) {
-        
-    }
-]);
-
-
-
-Bebella.controller('ClothingIndexCtrl', ['$scope',
-    function ($scope) {
-        
-    }
-]);
-
-
-
-Bebella.controller('DecorationIndexCtrl', ['$scope',
-    function ($scope) {
-        
-    }
-]);
-
-
-
 Bebella.controller('IndexCtrl', ['$scope',
+    function ($scope) {
+        
+    }
+]);
+
+
+Bebella.controller('SubscriptionIndexCtrl', ['$scope',
+    function ($scope) {
+        
+    }
+]);
+
+
+Bebella.controller('TrendingIndexCtrl', ['$scope',
     function ($scope) {
         
     }
@@ -80,61 +70,36 @@ Bebella.config(['$stateProvider', '$urlRouterProvider',
                         abstract: true
                     })
 
-
-                    .state('tabs.beauty', {
-                        url: '/beauty',
-                        views: {
-                            'tab1': {
-                                templateUrl: view('beauty/recipes'),
-                                controller: 'BeautyIndexCtrl'
-                            }
-                        }
-                    })
-
-                    .state('tabs.decoration', {
-                        url: '/decoration',
-                        views: {
-                            'tab2': {
-                                templateUrl: view('decoration/index'),
-                                controller: 'DecorationIndexCtrl'
-                            }
-                        }
-                    })
-
-                    .state('tabs.clothing', {
-                        url: '/clothing',
-                        views: {
-                            'tab3': {
-                                templateUrl: view('clothing/index'),
-                                controller: 'ClothingIndexCtrl'
-                            }
-                        }
-                    })
-                    
                     .state('tabs.home', {
                         url: '/home',
                         views: {
-                            'tab4': {
-                                templateUrl: view('index'),
+                            'tab1': {
+                                templateUrl: view('home/index'),
                                 controller: 'IndexCtrl'
                             }
                         }
                     })
-                    
-                    .state('beauty_recipes', {
-                        url:'/beauty/recipes',
-                        templateUrl: view('beauty/recipes')
+
+                    .state('tabs.trending', {
+                        url: '/trending',
+                        views: {
+                            'tab2': {
+                                templateUrl: view('trending/index'),
+                                controller: 'TrendingIndexCtrl'
+                            }
+                        }
                     })
-                    
-                    .state('beauty_trending', {
-                        url:'/beauty/trending',
-                        templateUrl: view('beauty/trending')
+
+                    .state('tabs.subscriptions', {
+                        url: '/subscriptions',
+                        views: {
+                            'tab3': {
+                                templateUrl: view('subscription/index'),
+                                controller: 'SubscriptionIndexCtrl'
+                            }
+                        }
                     })
-                    
-                    .state('beauty_channels', {
-                        url:'/beauty/channels',
-                        templateUrl: view('beauty/channels')
-                    });
+
                     
         }
     ]

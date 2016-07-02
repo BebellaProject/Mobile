@@ -1,0 +1,22 @@
+.bm-bg-1 {
+  background-color: #FB2B67; 
+}
+
+.bm-color-white {
+  color: #FFFFFF; 
+}
+
+.bm-no-margin-top {
+    margin-top: 0px;
+}
+
+.bm-tab-item-active {
+  border-bottom: 2px solid #fff; 
+}
+
+.bm-section-title {
+  margin: 0px;
+  padding-top: 10px;
+  padding-bottom: 10px; 
+}
+

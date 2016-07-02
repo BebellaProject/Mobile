@@ -9715,16 +9715,3 @@ a.button {
   -webkit-transition-duration: 0s;
   transition-duration: 0s; }
 
-.bm-bg-1 {
-  background-color: #FB2B67; }
-
-.bm-color-white {
-  color: #FFFFFF; }
-
-.bm-tab-item-active {
-  border-bottom: 2px solid #fff; }
-
-.bm-section-title {
-  margin: 0px;
-  padding-top: 10px;
-  padding-bottom: 10px; }
