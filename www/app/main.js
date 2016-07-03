@@ -1,4 +1,4 @@
-var Bebella = angular.module('Bebella', ['ionic', 'angularMoment']);
+var Bebella = angular.module('Bebella', ['ionic', 'angularMoment', 'ngStorage']);
 
 var APP_URL = "http://localhost:8000";
 
@@ -6,8 +6,8 @@ function view(path) {
     return "views/" + path + ".html";
 }
 
-function api_v1(path) {
-    return APP_URL + "/api/v1/" + path;
+function api_v1(path, token) {
+    return APP_URL + "/api/v1/" + path + "?api_token=" + token;
 }
 
 function attr(dest, src) {
@@ -22,8 +22,8 @@ function attr(dest, src) {
     }
 }
 
-Bebella.run(['$ionicPlatform', 'amMoment',
-    function ($ionicPlatform, amMoment) {
+Bebella.run(['$ionicPlatform', 'amMoment', 'AuthUser', '$state',
+    function ($ionicPlatform, amMoment, AuthUser, $state) {
         
         amMoment.changeLocale('pt-br');
         
@@ -36,6 +36,16 @@ Bebella.run(['$ionicPlatform', 'amMoment',
             if (window.StatusBar) {
                 StatusBar.styleDefault();
             }
+            
+            AuthUser.get().then(
+                function onSuccess(user) {
+                    $state.go('tabs.home');
+                    console.log(user);
+                },
+                function onError (err) {
+                    $state.go('login');
+                }
+            );
         });
     }
 ]);

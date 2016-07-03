@@ -1,4 +1,4 @@
-var Bebella = angular.module('Bebella', ['ionic', 'angularMoment']);
+var Bebella = angular.module('Bebella', ['ionic', 'angularMoment', 'ngStorage']);
 
 var APP_URL = "http://localhost:8000";
 
@@ -6,8 +6,8 @@ function view(path) {
     return "views/" + path + ".html";
 }
 
-function api_v1(path) {
-    return APP_URL + "/api/v1/" + path;
+function api_v1(path, token) {
+    return APP_URL + "/api/v1/" + path + "?api_token=" + token;
 }
 
 function attr(dest, src) {
@@ -22,8 +22,8 @@ function attr(dest, src) {
     }
 }
 
-Bebella.run(['$ionicPlatform', 'amMoment',
-    function ($ionicPlatform, amMoment) {
+Bebella.run(['$ionicPlatform', 'amMoment', 'AuthUser', '$state',
+    function ($ionicPlatform, amMoment, AuthUser, $state) {
         
         amMoment.changeLocale('pt-br');
         
@@ -36,6 +36,16 @@ Bebella.run(['$ionicPlatform', 'amMoment',
             if (window.StatusBar) {
                 StatusBar.styleDefault();
             }
+            
+            AuthUser.get().then(
+                function onSuccess(user) {
+                    $state.go('tabs.home');
+                    console.log(user);
+                },
+                function onError (err) {
+                    $state.go('login');
+                }
+            );
         });
     }
 ]);
@@ -66,6 +76,64 @@ Bebella.factory('Recipe', [
 ]);
 
 
+
+
+Bebella.factory('User', [
+    function () {
+        var User = new Function();
+        
+        return User;
+    }
+]);
+
+
+Bebella.service('AuthUser', ['$q', '$localStorage',
+    function ($q, $localStorage) {
+        var service = this;
+    
+        service.get = function () {
+            var deferred = $q.defer();
+            
+            var _user = $localStorage.auth_user;
+            
+            if (_user) {
+                deferred.resolve(_user);
+            } else {
+                deferred.reject("Usuário não salvo");
+            }
+            
+            return deferred.promise;
+        };
+    
+        service.set = function (user) {
+            $localStorage.auth_user = user;
+        };
+    
+    }
+]);
+
+
+Bebella.service('PingProvider', ['$q', '$http',
+    function ($q, $http) {
+        var service = this;
+        
+        service.ping = function () {
+            var deferred = $q.defer();
+            
+            $http.get(APP_URL + '/ping').then(
+                function onSuccess (res) {
+                    deferred.resolve(res.data);
+                },
+                function onError (res) {
+                    deferred.reject(res);
+                }
+            );
+            
+            return deferred.promise;
+        };
+        
+    }
+]);
 
 
 Bebella.service('ChannelRepository', ['$http', '$q', 'Channel',
@@ -263,6 +331,52 @@ Bebella.service('RecipeRepository', ['$http', '$q', 'Recipe',
 ]);
 
 
+Bebella.service('UserRepository', ['$http', '$q', 'User',
+    function ($http, $q, User) {
+        var repository = this;
+        
+        repository.auth = function (id) {
+            var deferred = $q.defer();
+            
+            $http.get(APP_URL + '/auth/user').then(
+                function (res) {
+                    var user = new User();
+                    
+                    attr(user, res.data);
+                    
+                    deferred.resolve(user);
+                },
+                function (res) {
+                    deferred.reject(res);
+                }
+            );
+
+            return deferred.promise;
+        };
+        
+        repository.login = function (user) {
+            var deferred = $q.defer();
+            
+            var data = JSON.stringify(user);
+            
+            $http.post(APP_URL + "/auth/api_login", data).then(
+                function (res) {
+                    attr(user, res.data);
+                    
+                    deferred.resolve(user);
+                },
+                function (res) {
+                    deferred.reject(res);
+                }
+            );
+            
+            return deferred.promise;
+        };
+    }
+]);
+
+
+
 Bebella.controller('FilterIndexCtrl', ['$scope',
     function ($scope) {
         
@@ -283,6 +397,37 @@ Bebella.controller('IndexCtrl', ['$scope', 'RecipeRepository',
                 alert("Houve um erro na obtenção da lista de receitas");
             }
         );
+        
+    }
+]);
+
+
+Bebella.controller('LoginIndexCtrl', ['$scope', '$http', '$state', 'AuthUser', 'User', 'PingProvider', 'UserRepository',
+    function ($scope, $http, $state, AuthUser, User, PingProvider, UserRepository) {
+        
+        $scope.user = new User();
+        
+        $scope.login = function () {
+            PingProvider.ping().then(
+                function onSuccess (pong) {
+                    
+                    UserRepository.login($scope.user).then(
+                        function onSuccess (user) {
+                            AuthUser.set(user);
+                            
+                            $state.go('tabs.home');
+                        },
+                        function onError (res) {
+                            alert("Login falhou, por favor, verifique as credenciais fornecidas.");
+                        }
+                    );
+                    
+                },
+                function onError (res) {
+                    alert("Não foi possivel estabelecer comunicação com o servidor.");
+                } 
+            );
+        };
         
     }
 ]);
@@ -312,6 +457,12 @@ Bebella.controller('RecipeIndexCtrl', ['$scope', '$stateParams', 'RecipeReposito
 ]);
 
 
+
+Bebella.controller('RegisterIndexCtrl', ['$scope',
+    function ($scope) {
+        
+    }
+]);
 
 Bebella.controller('SubscriptionIndexCtrl', ['$scope', 'ChannelRepository',
     function ($scope, ChannelRepository) {
@@ -366,6 +517,18 @@ Bebella.config(['$stateProvider', '$urlRouterProvider',
             $urlRouterProvider.otherwise('/tabs/home');
 
             $stateProvider
+
+                    .state('login', {
+                        url: '/login',
+                        templateUrl: view('login/index'),
+                        controller: 'LoginIndexCtrl'
+                    })
+                    
+                    .state('register', {
+                        url: '/register',
+                        templateUrl: view('register/index'),
+                        controller: 'RegisterIndexCtrl'
+                    })
 
                     .state('tabs', {
                         url: '/tabs',
@@ -424,9 +587,7 @@ Bebella.config(['$stateProvider', '$urlRouterProvider',
                         url: '/product/{productId}/options',
                         templateUrl: view('product/option/list'),
                         controller: 'ProductOptionListCtrl'
-                    })
-
-                    
+                    });
         }
     ]
 );

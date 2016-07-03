@@ -5,6 +5,18 @@ Bebella.config(['$stateProvider', '$urlRouterProvider',
 
             $stateProvider
 
+                    .state('login', {
+                        url: '/login',
+                        templateUrl: view('login/index'),
+                        controller: 'LoginIndexCtrl'
+                    })
+                    
+                    .state('register', {
+                        url: '/register',
+                        templateUrl: view('register/index'),
+                        controller: 'RegisterIndexCtrl'
+                    })
+
                     .state('tabs', {
                         url: '/tabs',
                         templateUrl: view('tabs'),
@@ -62,9 +74,7 @@ Bebella.config(['$stateProvider', '$urlRouterProvider',
                         url: '/product/{productId}/options',
                         templateUrl: view('product/option/list'),
                         controller: 'ProductOptionListCtrl'
-                    })
-
-                    
+                    });
         }
     ]
 );
