@@ -1,4 +1,4 @@
-<ion-view title="Home" hide-back-button="true" id="page2" class=" ">
+<ion-view on-swipe-left="changeTab('tabs.trending')" title="Home" hide-back-button="true" id="page2" class=" ">
     <ion-content padding="true" class="">
         <div ng-repeat="recipe in recipes" class="list card bm-no-margin-top" id="recipe-card-{{$index}}">
             <ion-item id="beleza-list-item8" class="  ">{{recipe.name}}
@@ -12,8 +12,10 @@
             <ion-item class="item-avatar item-icon-right  " id="beleza-list-item12">
                 <img src="{{appUrl}}/{{recipe.channel_image}}">
                 <h2>{{ recipe.channel_name }}</h2>
-                <p style="white-space:normal;">{{ recipe.desc | limitTo: 15 }}</p>
-                <i class="icon ion-ios-clock"></i>
+                <p style="white-space:normal;">
+                    {{ recipe.view_count }} <i class="ion-eye"></i>
+                    {{ recipe.like_count }} <i class="ion-heart"></i>
+                </p>
             </ion-item>
         </div>
     </ion-content>

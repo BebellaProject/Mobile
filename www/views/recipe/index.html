@@ -7,7 +7,10 @@
             <ion-item class="item-avatar item-icon-right  " id="selagemCVinagreDeMa-list-item11">
                 <img src="{{appUrl}}/{{recipe.channel_image}}">
                 <h2>{{recipe.channel_name}}</h2>
-                <p>{{ recipe.created_at }}</p>
+                <p>
+                    {{ recipe.view_count }} <i class="ion-eye"></i>
+                    {{ recipe.like_count }} <i class="ion-heart"></i>
+                </p>
                 <i class="icon ion-ios-heart"></i>
             </ion-item>
             <div class="item item-body " id="selagemCVinagreDeMa-list-item-container1">
@@ -32,7 +35,8 @@
         
         <h3 id="selagemCVinagreDeMa-heading3" style="color:#FFFFFF;text-align:center;" class=" bm-bg-1  bm-section-title">Produtos Usados</h3>
         <ion-list id="selagemCVinagreDeMa-list11" class=" ">
-            <ion-item ng-repeat="product in recipe.products" class="item-thumbnail-left  " id="selagemCVinagreDeMa-list-item18" ui-sref="hidratanteX">
+            <ion-item ng-repeat="product in recipe.products" class="item-thumbnail-left  " id="selagemCVinagreDeMa-list-item18" 
+                      ui-sref="product_option_list({productId: {{product.product_id}}})">
                 <img src="{{appUrl}}/{{product.product_image}}">
                 <h2>{{product.product_name}}</h2>
                 <p style="white-space:normal;">{{product.product_desc}}</p>

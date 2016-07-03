@@ -15,7 +15,7 @@ function attr(dest, src) {
         if (e == "created_at" || e == "updated_at") {
             dest[e] = moment(src[e]).fromNow();
         } else if (e.startsWith("has_") || e.startsWith("is_") || e.startsWith("used_for_")) {
-            dest[e] = (src[e] === 1);
+            dest[e] = (src[e] == 1);
         } else {
             dest[e] = src[e];
         }
@@ -41,6 +41,16 @@ Bebella.run(['$ionicPlatform', 'amMoment',
 ]);
 
 
+Bebella.factory('Channel', [
+    function () {
+        var Channel = new Function();
+        
+        return Channel;
+    }
+]);
+
+
+
 Bebella.factory('Recipe', [
     function () {
         var Recipe = function () {
@@ -52,6 +62,93 @@ Bebella.factory('Recipe', [
         };
         
         return Recipe;
+    }
+]);
+
+
+
+
+Bebella.service('ChannelRepository', ['$http', '$q', 'Channel',
+    function ($http, $q, Channel) {
+        var repository = this;
+        
+        repository.find = function (id) {
+            var deferred = $q.defer();
+            
+            $http.get(api_v1('channel/find/' + id)).then(
+                function (res) {
+                    var channel = new Channel();
+                    
+                    attr(channel, res.data);
+                    
+                    deferred.resolve(channel);
+                },
+                function (res) {
+                    deferred.reject(res);
+                }
+            );
+
+            return deferred.promise;
+        };
+        
+        repository.all = function () {
+            var deferred = $q.defer();
+            
+            $http.get(api_v1("channel/all")).then(
+                function (res) {
+                    var channels = _.map(res.data, function (json) {
+                        var channel = new Channel();
+                        
+                        attr(channel, json);
+                        
+                        return channel;
+                    });
+                    
+                    deferred.resolve(channels);
+                },
+                function (res) {
+                    deferred.reject(res);
+                }
+            );
+            
+            return deferred.promise;
+        };
+        
+        repository.edit = function (channel) {
+            var deferred = $q.defer();
+            
+            var data = JSON.stringify(channel);
+            
+            $http.post(api_v1("channel/edit"), data).then(
+                 function (res) {
+                     deferred.resolve(channel);
+                 },
+                 function (res) {
+                     deferred.reject(res);
+                 }
+            );
+            
+            return deferred.promise;
+        };
+        
+        repository.save = function (channel) {
+            var deferred = $q.defer();
+            
+            var data = JSON.stringify(channel);
+            
+            $http.post(api_v1("channel/save"), data).then(
+                function (res) {
+                    channel.id = res.data.id;
+                    
+                    deferred.resolve(channel);
+                },
+                function (res) {
+                    deferred.reject(res);
+                }
+            );
+            
+            return deferred.promise;
+        };
     }
 ]);
 
@@ -85,6 +182,29 @@ Bebella.service('RecipeRepository', ['$http', '$q', 'Recipe',
             var deferred = $q.defer();
             
             $http.get(api_v1("recipe/all")).then(
+                function (res) {
+                    var recipes = _.map(res.data, function (json) {
+                        var recipe = new Recipe();
+                        
+                        attr(recipe, json);
+                        
+                        return recipe;
+                    });
+                    
+                    deferred.resolve(recipes);
+                },
+                function (res) {
+                    deferred.reject(res);
+                }
+            );
+            
+            return deferred.promise;
+        };
+        
+        repository.trending = function () {
+            var deferred = $q.defer();
+            
+            $http.get(api_v1("recipe/trending")).then(
                 function (res) {
                     var recipes = _.map(res.data, function (json) {
                         var recipe = new Recipe();
@@ -143,6 +263,13 @@ Bebella.service('RecipeRepository', ['$http', '$q', 'Recipe',
 ]);
 
 
+Bebella.controller('FilterIndexCtrl', ['$scope',
+    function ($scope) {
+        
+    }
+]);
+
+
 Bebella.controller('IndexCtrl', ['$scope', 'RecipeRepository',
     function ($scope, RecipeRepository) {
         
@@ -151,12 +278,18 @@ Bebella.controller('IndexCtrl', ['$scope', 'RecipeRepository',
         RecipeRepository.all().then(
             function onSuccess (list) {
                 $scope.recipes = list;
-                console.log(list);
             },
             function onError (res) {
                 alert("Houve um erro na obtenção da lista de receitas");
             }
         );
+        
+    }
+]);
+
+
+Bebella.controller('ProductOptionListCtrl', ['$scope',
+    function ($scope) {
         
     }
 ]);
@@ -170,7 +303,6 @@ Bebella.controller('RecipeIndexCtrl', ['$scope', '$stateParams', 'RecipeReposito
         RecipeRepository.find($stateParams.recipeId).then(
             function onSuccess (recipe) {
                 $scope.recipe = recipe;
-                console.log(recipe);
             },
             function onError (res) {
                 alert("Erro ao obter os detalhes da receita");
@@ -181,15 +313,48 @@ Bebella.controller('RecipeIndexCtrl', ['$scope', '$stateParams', 'RecipeReposito
 
 
 
-Bebella.controller('SubscriptionIndexCtrl', ['$scope',
-    function ($scope) {
+Bebella.controller('SubscriptionIndexCtrl', ['$scope', 'ChannelRepository',
+    function ($scope, ChannelRepository) {
+        
+        $scope.appUrl = APP_URL;
+        
+        ChannelRepository.all().then(
+            function onSuccess (list) {
+                $scope.channels = list;
+            },
+            function onError (res) {
+                alert("Houve um erro na obtenção da lista de canais");
+            }
+        );
         
     }
 ]);
 
 
-Bebella.controller('TrendingIndexCtrl', ['$scope',
-    function ($scope) {
+Bebella.controller('TabsCtrl', ['$scope','$state',
+    function ($scope, $state) {
+        
+        $scope.changeTab = function (state) {
+            $state.go(state);
+        };
+        
+    }
+]);
+
+
+Bebella.controller('TrendingIndexCtrl', ['$scope', 'RecipeRepository',
+    function ($scope, RecipeRepository) {
+        
+        $scope.appUrl = APP_URL;
+        
+        RecipeRepository.trending().then(
+            function onSuccess (list) {
+                $scope.recipes = list;
+            },
+            function onError (res) {
+                alert("Houve um erro na obtenção da lista de tendências");
+            }
+        );
         
     }
 ]);
@@ -205,6 +370,7 @@ Bebella.config(['$stateProvider', '$urlRouterProvider',
                     .state('tabs', {
                         url: '/tabs',
                         templateUrl: view('tabs'),
+                        controller: 'TabsCtrl',
                         abstract: true
                     })
 
@@ -238,11 +404,27 @@ Bebella.config(['$stateProvider', '$urlRouterProvider',
                         }
                     })
                     
+                    .state('tabs.filter', {
+                        url: '/filter',
+                        views: {
+                            'tab4': {
+                                templateUrl: view('filter/index'),
+                                controller: 'FilterIndexCtrl'
+                            }
+                        }
+                    })
+                    
                     .state('recipe', {
                         url: '/recipe/{recipeId}',
                         templateUrl: view('recipe/index'),
                         controller: 'RecipeIndexCtrl'
-                    });
+                    })
+                    
+                    .state('product_option_list', {
+                        url: '/product/{productId}/options',
+                        templateUrl: view('product/option/list'),
+                        controller: 'ProductOptionListCtrl'
+                    })
 
                     
         }

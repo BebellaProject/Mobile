@@ -1,23 +1,21 @@
-<ion-view title="Tendências" hide-back-button="true" id="page6" class=" ">
+<ion-view on-swipe-left="changeTab('tabs.subscriptions')" title="Tendências" hide-back-button="true" id="page6" class=" ">
     <ion-content padding="true" class="has-header">
-        <div class="list card " id="beleza2-card24">
-            <div style="margin: 0px; line-height: 250px; text-align: center; background-color: rgb(232, 235, 239);">
-                <i class="icon ion-image" style="font-size: 64px; color: rgb(136, 136, 136); vertical-align: middle;"></i>
-            </div>
-            <ion-item class="item-avatar item-icon-right  " id="beleza2-list-item32">
-                <h2>Receita X</h2>
-                <p>Usuário</p>
-                <i class="icon ion-thumbsup icon-accessory"></i>
+        <div ng-repeat="recipe in recipes" class="list card bm-no-margin-top" id="recipe-card-{{$index}}">
+            <ion-item id="beleza-list-item8" class="  ">{{recipe.name}}
+                <span class="item-note">{{ recipe.created_at }}</span>
             </ion-item>
-        </div>
-        <div class="list card " id="beleza2-card25">
-            <div style="margin: 0px; line-height: 250px; text-align: center; background-color: rgb(232, 235, 239);">
-                <i class="icon ion-image" style="font-size: 64px; color: rgb(136, 136, 136); vertical-align: middle;"></i>
+            <div class=" item item-image">
+                <a style="display:block;" ui-sref="recipe({recipeId: {{recipe.id}}})">
+                    <img src="{{appUrl}}/{{recipe.image_path}}" width="100%" height="auto" style="display: block; margin-left: auto; margin-right: auto;">
+                </a>
             </div>
-            <ion-item class="item-avatar item-icon-right  " id="beleza2-list-item37">
-                <h2>Receita Y</h2>
-                <p>Usuário</p>
-                <i class="icon ion-thumbsup icon-accessory"></i>
+            <ion-item class="item-avatar item-icon-right  " id="beleza-list-item12">
+                <img src="{{appUrl}}/{{recipe.channel_image}}">
+                <h2>{{ recipe.channel_name }}</h2>
+                <p style="white-space:normal;">
+                    {{ recipe.view_count }} <i class="ion-eye"></i>
+                    {{ recipe.like_count }} <i class="ion-heart"></i>
+                </p>
             </ion-item>
         </div>
     </ion-content>

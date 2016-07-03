@@ -44,6 +44,29 @@ Bebella.service('RecipeRepository', ['$http', '$q', 'Recipe',
             return deferred.promise;
         };
         
+        repository.trending = function () {
+            var deferred = $q.defer();
+            
+            $http.get(api_v1("recipe/trending")).then(
+                function (res) {
+                    var recipes = _.map(res.data, function (json) {
+                        var recipe = new Recipe();
+                        
+                        attr(recipe, json);
+                        
+                        return recipe;
+                    });
+                    
+                    deferred.resolve(recipes);
+                },
+                function (res) {
+                    deferred.reject(res);
+                }
+            );
+            
+            return deferred.promise;
+        };
+        
         repository.edit = function (recipe) {
             var deferred = $q.defer();
             

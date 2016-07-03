@@ -6,7 +6,6 @@ Bebella.controller('IndexCtrl', ['$scope', 'RecipeRepository',
         RecipeRepository.all().then(
             function onSuccess (list) {
                 $scope.recipes = list;
-                console.log(list);
             },
             function onError (res) {
                 alert("Houve um erro na obtenção da lista de receitas");
