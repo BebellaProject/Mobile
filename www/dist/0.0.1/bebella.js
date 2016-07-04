@@ -136,46 +136,60 @@ Bebella.service('PingProvider', ['$q', '$http',
 ]);
 
 
-Bebella.service('ChannelRepository', ['$http', '$q', 'Channel',
-    function ($http, $q, Channel) {
+Bebella.service('ChannelRepository', ['$http', '$q', 'Channel', 'AuthUser',
+    function ($http, $q, Channel, AuthUser) {
         var repository = this;
         
         repository.find = function (id) {
             var deferred = $q.defer();
             
-            $http.get(api_v1('channel/find/' + id)).then(
-                function (res) {
-                    var channel = new Channel();
-                    
-                    attr(channel, res.data);
-                    
-                    deferred.resolve(channel);
+            AuthUser.get().then(
+                function onSuccess (auth) {
+                    $http.get(api_v1('channel/find/' + id, auth.api_token)).then(
+                        function (res) {
+                            var channel = new Channel();
+
+                            attr(channel, res.data);
+
+                            deferred.resolve(channel);
+                        },
+                        function (res) {
+                            deferred.reject(res);
+                        }
+                    );    
                 },
-                function (res) {
-                    deferred.reject(res);
+                function onError (err) {
+                    console.log(err);
                 }
             );
-
+            
             return deferred.promise;
         };
         
         repository.all = function () {
             var deferred = $q.defer();
             
-            $http.get(api_v1("channel/all")).then(
-                function (res) {
-                    var channels = _.map(res.data, function (json) {
-                        var channel = new Channel();
-                        
-                        attr(channel, json);
-                        
-                        return channel;
-                    });
-                    
-                    deferred.resolve(channels);
+            AuthUser.get().then(
+                function onSuccess (auth) {
+                    $http.get(api_v1("channel/all", auth.api_token)).then(
+                        function (res) {
+                            var channels = _.map(res.data, function (json) {
+                                var channel = new Channel();
+
+                                attr(channel, json);
+
+                                return channel;
+                            });
+
+                            deferred.resolve(channels);
+                        },
+                        function (res) {
+                            deferred.reject(res);
+                        }
+                    );
                 },
-                function (res) {
-                    deferred.reject(res);
+                function onError (err) {
+                    console.log(err);
                 }
             );
             
@@ -185,15 +199,22 @@ Bebella.service('ChannelRepository', ['$http', '$q', 'Channel',
         repository.edit = function (channel) {
             var deferred = $q.defer();
             
-            var data = JSON.stringify(channel);
-            
-            $http.post(api_v1("channel/edit"), data).then(
-                 function (res) {
-                     deferred.resolve(channel);
-                 },
-                 function (res) {
-                     deferred.reject(res);
-                 }
+            AuthUser.get().then(
+                function onSuccess (auth) {
+                    var data = JSON.stringify(channel);
+
+                    $http.post(api_v1("channel/edit", auth.api_token), data).then(
+                        function (res) {
+                            deferred.resolve(channel);
+                        },
+                        function (res) {
+                            deferred.reject(res);
+                        }
+                    );                    
+                },
+                function onError (err) {
+                    console.log(err);
+                }
             );
             
             return deferred.promise;
@@ -202,16 +223,23 @@ Bebella.service('ChannelRepository', ['$http', '$q', 'Channel',
         repository.save = function (channel) {
             var deferred = $q.defer();
             
-            var data = JSON.stringify(channel);
-            
-            $http.post(api_v1("channel/save"), data).then(
-                function (res) {
-                    channel.id = res.data.id;
-                    
-                    deferred.resolve(channel);
+            AuthUser.get().then(
+                function onSuccess (auth) {
+                    var data = JSON.stringify(channel);
+
+                    $http.post(api_v1("channel/save", auth.api_token), data).then(
+                        function (res) {
+                            channel.id = res.data.id;
+
+                            deferred.resolve(channel);
+                        },
+                        function (res) {
+                            deferred.reject(res);
+                        }
+                    );
                 },
-                function (res) {
-                    deferred.reject(res);
+                function onError (err) {
+                    console.log(err);
                 }
             );
             
@@ -223,69 +251,90 @@ Bebella.service('ChannelRepository', ['$http', '$q', 'Channel',
 
 
 
-Bebella.service('RecipeRepository', ['$http', '$q', 'Recipe',
-    function ($http, $q, Recipe) {
+Bebella.service('RecipeRepository', ['$http', '$q', 'Recipe', 'AuthUser',
+    function ($http, $q, Recipe, AuthUser) {
         var repository = this;
         
         repository.find = function (id) {
             var deferred = $q.defer();
             
-            $http.get(api_v1('recipe/find/' + id)).then(
-                function (res) {
-                    var recipe = new Recipe();
-                    
-                    attr(recipe, res.data);
-                    
-                    deferred.resolve(recipe);
+            AuthUser.get().then(
+                function onSuccess (auth) {
+                    $http.get(api_v1('recipe/find/' + id, auth.api_token)).then(
+                        function (res) {
+                            var recipe = new Recipe();
+
+                            attr(recipe, res.data);
+
+                            deferred.resolve(recipe);
+                        },
+                        function (res) {
+                            deferred.reject(res);
+                        }
+                    );
                 },
-                function (res) {
-                    deferred.reject(res);
+                function onError (err) {
+                    console.log(err);
                 }
             );
-
+            
             return deferred.promise;
         };
         
         repository.all = function () {
             var deferred = $q.defer();
             
-            $http.get(api_v1("recipe/all")).then(
-                function (res) {
-                    var recipes = _.map(res.data, function (json) {
-                        var recipe = new Recipe();
-                        
-                        attr(recipe, json);
-                        
-                        return recipe;
-                    });
-                    
-                    deferred.resolve(recipes);
+            AuthUser.get().then(
+                function onSuccess (auth) {
+                    $http.get(api_v1("recipe/all", auth.api_token)).then(
+                        function (res) {
+                            var recipes = _.map(res.data, function (json) {
+                                var recipe = new Recipe();
+
+                                attr(recipe, json);
+
+                                return recipe;
+                            });
+
+                            deferred.resolve(recipes);
+                        },
+                        function (res) {
+                            deferred.reject(res);
+                        }
+                    );
                 },
-                function (res) {
-                    deferred.reject(res);
+                function onError (err) {
+                    console.log(err);
                 }
-            );
+            );            
             
             return deferred.promise;
         };
         
         repository.trending = function () {
             var deferred = $q.defer();
-            
-            $http.get(api_v1("recipe/trending")).then(
-                function (res) {
-                    var recipes = _.map(res.data, function (json) {
-                        var recipe = new Recipe();
-                        
-                        attr(recipe, json);
-                        
-                        return recipe;
-                    });
-                    
-                    deferred.resolve(recipes);
+
+            AuthUser.get().then(
+                function onSuccess (auth) {
+                    $http.get(api_v1("recipe/trending", auth.api_token)).then(
+                        function (res) {
+                            var recipes = _.map(res.data, function (json) {
+                                var recipe = new Recipe();
+
+                                attr(recipe, json);
+
+                                return recipe;
+                            });
+
+                            deferred.resolve(recipes);
+                        },
+                        function (res) {
+                            deferred.reject(res);
+                        }
+                    );
                 },
-                function (res) {
-                    deferred.reject(res);
+                function onError (err) {
+                    console.log(err);
                 }
             );
             
@@ -294,16 +343,23 @@ Bebella.service('RecipeRepository', ['$http', '$q', 'Recipe',
         
         repository.edit = function (recipe) {
             var deferred = $q.defer();
-            
-            var data = JSON.stringify(recipe);
-            
-            $http.post(api_v1("recipe/edit"), data).then(
-                 function (res) {
-                     deferred.resolve(recipe);
-                 },
-                 function (res) {
-                     deferred.reject(res);
-                 }
+
+            AuthUser.get().then(
+                function onSuccess (auth) {
+                    var data = JSON.stringify(recipe);
+
+                    $http.post(api_v1("recipe/edit", auth.api_token), data).then(
+                         function (res) {
+                             deferred.resolve(recipe);
+                         },
+                         function (res) {
+                             deferred.reject(res);
+                         }
+                    );
+                },
+                function onError (err) {
+                    console.log(err);
+                }
             );
             
             return deferred.promise;
@@ -312,16 +368,23 @@ Bebella.service('RecipeRepository', ['$http', '$q', 'Recipe',
         repository.save = function (recipe) {
             var deferred = $q.defer();
             
-            var data = JSON.stringify(recipe);
-            
-            $http.post(api_v1("recipe/save"), data).then(
-                function (res) {
-                    recipe.id = res.data.id;
-                    
-                    deferred.resolve(recipe);
+            AuthUser.get().then(
+                function onSuccess (auth) {
+                    var data = JSON.stringify(recipe);
+
+                    $http.post(api_v1("recipe/save", auth.api_token), data).then(
+                        function (res) {
+                            recipe.id = res.data.id;
+
+                            deferred.resolve(recipe);
+                        },
+                        function (res) {
+                            deferred.reject(res);
+                        }
+                    );
                 },
-                function (res) {
-                    deferred.reject(res);
+                function onError (err) {
+                    console.log(err);
                 }
             );
             
@@ -415,6 +478,8 @@ Bebella.controller('LoginIndexCtrl', ['$scope', '$http', '$state', 'AuthUser', '
                         function onSuccess (user) {
                             AuthUser.set(user);
                             
+                            delete user.password;
+                            
                             $state.go('tabs.home');
                         },
                         function onError (res) {
@@ -459,6 +524,12 @@ Bebella.controller('RecipeIndexCtrl', ['$scope', '$stateParams', 'RecipeReposito
 
 
 Bebella.controller('RegisterIndexCtrl', ['$scope',
+    function ($scope) {
+        
+    }
+]);
+
+Bebella.controller('SideMenuCtrl', ['$scope',
     function ($scope) {
         
     }

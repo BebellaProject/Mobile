@@ -40,7 +40,6 @@ Bebella.run(['$ionicPlatform', 'amMoment', 'AuthUser', '$state',
             AuthUser.get().then(
                 function onSuccess(user) {
                     $state.go('tabs.home');
-                    console.log(user);
                 },
                 function onError (err) {
                     $state.go('login');
