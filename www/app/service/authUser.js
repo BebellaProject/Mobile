@@ -20,5 +20,9 @@ Bebella.service('AuthUser', ['$q', '$localStorage',
             $localStorage.auth_user = user;
         };
     
+        service.destroy = function () {
+            $localStorage.$reset();
+        };
+    
     }
 ]);

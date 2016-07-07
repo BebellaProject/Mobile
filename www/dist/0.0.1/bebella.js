@@ -22,8 +22,8 @@ function attr(dest, src) {
     }
 }
 
-Bebella.run(['$ionicPlatform', 'amMoment', 'AuthUser', '$state',
-    function ($ionicPlatform, amMoment, AuthUser, $state) {
+Bebella.run(['$ionicPlatform', 'amMoment', 'AuthUser', '$state', 'FilterOptions',
+    function ($ionicPlatform, amMoment, AuthUser, $state, FilterOptions) {
         
         amMoment.changeLocale('pt-br');
         
@@ -39,8 +39,15 @@ Bebella.run(['$ionicPlatform', 'amMoment', 'AuthUser', '$state',
             
             AuthUser.get().then(
                 function onSuccess(user) {
+                    FilterOptions.get().then(
+                        function onSuccess (opts) {
+                        },
+                        function onError (res) {
+                            FilterOptions.setDefault();
+                        }
+                    );
+                    
                     $state.go('tabs.home');
-                    console.log(user);
                 },
                 function onError (err) {
                     $state.go('login');
@@ -109,6 +116,73 @@ Bebella.service('AuthUser', ['$q', '$localStorage',
             $localStorage.auth_user = user;
         };
     
+        service.destroy = function () {
+            $localStorage.$reset();
+        };
+    
+    }
+]);
+
+
+Bebella.service('CurrentFeed', ['$q', '$sessionStorage',
+    function ($q, $sessionStorage) {
+        var service = this;
+        
+        service.get = function () {
+            var deferred = $q.defer();
+            
+            var _feed = $sessionStorage.feed;
+            
+            if (_feed) {
+                deferred.resolve(_feed);
+            } else {
+                deferred.reject("Feed não salvo");
+            }
+            
+            return deferred.promise;
+        };
+    
+        service.set = function (feed) {
+            $sessionStorage.feed = feed;
+        };
+    
+        service.destroy = function () {
+            $sessionStorage.$reset();
+        };
+    
+    }
+]);
+
+
+Bebella.service('FilterOptions', ['$q', '$localStorage',
+    function ($q, $localStorage) {
+        var service = this;
+    
+        service.get = function () {
+            var deferred = $q.defer();
+            
+            var _filter_options = $localStorage.filter_options;
+            
+            if (_filter_options) {
+                deferred.resolve(_filter_options);
+            } else {
+                deferred.reject("Opções de filtro não salvas");
+            }
+            
+            return deferred.promise;
+        };
+    
+        service.set = function (filter_options) {
+            $localStorage.filter_options = filter_options;
+        };
+        
+        service.setDefault = function () {
+            $localStorage.filter_options = {
+                beauty: true,
+                decoration: true,
+                clothing: true
+            };
+        };
     }
 ]);
 
@@ -281,6 +355,38 @@ Bebella.service('RecipeRepository', ['$http', '$q', 'Recipe', 'AuthUser',
             return deferred.promise;
         };
         
+        repository.paginateWithFilters = function (page, filters) {
+            var deferred = $q.defer();
+            
+            var data = JSON.stringify(filters);
+            
+            AuthUser.get().then(
+                function onSuccess (auth) {
+                    $http.post(api_v1("recipe/paginateWithFilters/" + page, auth.api_token), data).then(
+                        function (res) {
+                            var recipes = _.map(res.data.data, function (json) {
+                                var recipe = new Recipe();
+
+                                attr(recipe, json);
+
+                                return recipe;
+                            });
+
+                            deferred.resolve(recipes);
+                        },
+                        function (res) {
+                            deferred.reject(res);
+                        }
+                    );
+                },
+                function onError (err) {
+                    console.log(err);
+                }
+            );            
+            
+            return deferred.promise;
+        };
+        
         repository.all = function () {
             var deferred = $q.defer();
             
@@ -440,27 +546,101 @@ Bebella.service('UserRepository', ['$http', '$q', 'User',
 
 
 
-Bebella.controller('FilterIndexCtrl', ['$scope',
-    function ($scope) {
+Bebella.controller('FilterIndexCtrl', ['$scope', 'FilterOptions',
+    function ($scope, FilterOptions) {
+        
+        FilterOptions.get().then(
+            function onSuccess (options) {
+                $scope.options = options;
+            },
+            function onError (res) {
+                alert("Erro ao obter os filtros do usuário.");
+            }
+        );
         
     }
 ]);
 
 
-Bebella.controller('IndexCtrl', ['$scope', 'RecipeRepository',
-    function ($scope, RecipeRepository) {
-        
+Bebella.controller('IndexCtrl', ['$scope', 'RecipeRepository', 'FilterOptions', 'CurrentFeed',
+    function ($scope, RecipeRepository, FilterOptions, CurrentFeed) {
+
         $scope.appUrl = APP_URL;
+        $scope.moreDataCanBeLoaded = true;
+
+        var feed_page = 1;
         
-        RecipeRepository.all().then(
-            function onSuccess (list) {
-                $scope.recipes = list;
-            },
-            function onError (res) {
-                alert("Houve um erro na obtenção da lista de receitas");
-            }
+        $scope.refresh = function () {
+            $scope.moreDataCanBeLoaded = true;
+            
+            FilterOptions.get().then(
+                    function onSuccess(options) {
+                        feed_page = 1;
+
+                        RecipeRepository.paginateWithFilters(feed_page, options).then(
+                                function onSuccess(recipes) {
+                                    $scope.recipes = recipes;
+
+                                    $scope.$broadcast('scroll.refreshComplete');
+                                },
+                                function onError(res) {
+                                    alert("Não foi possível obter o feed.");
+                                }
+                        );
+                    },
+                    function onError(res) {
+                        alert("Erro ao obter os filtros do usuário");
+                    }
+            );
+        };
+
+        $scope.nextPage = function () {
+            feed_page += 1;
+
+            FilterOptions.get().then(
+                    function onSuccess(options) {
+                        RecipeRepository.paginateWithFilters(feed_page, options).then(
+                                function onSuccess(recipes) {
+                                    if (recipes.length == 0) {
+                                        $scope.moreDataCanBeLoaded = false;
+                                    } else {
+                                        $scope.recipes.push.apply($scope.recipes, recipes);  
+                                    }
+                                    
+                                    $scope.$broadcast('scroll.infiniteScrollComplete');
+                                },
+                                function onError() {
+                                    alert("Erro ao obter próxima página");
+                                }
+                        );
+                    },
+                    function onError(res) {
+                        alert("Erro ao obter os filtros do usuário");
+                    }
+            );
+        };
+        
+
+        FilterOptions.get().then(
+                function onSuccess(options) {
+                    RecipeRepository.paginateWithFilters(feed_page, options).then(
+                            function onSuccess(recipes) {
+                                $scope.recipes = recipes;
+                            },
+                            function onError(res) {
+                                alert("Não foi possível obter o feed.");
+                            }
+                    );
+                },
+                function onError(res) {
+                    alert("Falha ao obter os filtros");
+                }
         );
-        
+
+        $scope.$on('$stateChangeSuccess', function () {
+            $scope.nextPage();
+        });
+
     }
 ]);
 
@@ -477,8 +657,6 @@ Bebella.controller('LoginIndexCtrl', ['$scope', '$http', '$state', 'AuthUser', '
                     UserRepository.login($scope.user).then(
                         function onSuccess (user) {
                             AuthUser.set(user);
-                            
-                            delete user.password;
                             
                             $state.go('tabs.home');
                         },

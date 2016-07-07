@@ -22,8 +22,8 @@ function attr(dest, src) {
     }
 }
 
-Bebella.run(['$ionicPlatform', 'amMoment', 'AuthUser', '$state',
-    function ($ionicPlatform, amMoment, AuthUser, $state) {
+Bebella.run(['$ionicPlatform', 'amMoment', 'AuthUser', '$state', 'FilterOptions',
+    function ($ionicPlatform, amMoment, AuthUser, $state, FilterOptions) {
         
         amMoment.changeLocale('pt-br');
         
@@ -39,6 +39,14 @@ Bebella.run(['$ionicPlatform', 'amMoment', 'AuthUser', '$state',
             
             AuthUser.get().then(
                 function onSuccess(user) {
+                    FilterOptions.get().then(
+                        function onSuccess (opts) {
+                        },
+                        function onError (res) {
+                            FilterOptions.setDefault();
+                        }
+                    );
+                    
                     $state.go('tabs.home');
                 },
                 function onError (err) {
