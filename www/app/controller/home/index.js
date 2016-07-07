@@ -1,5 +1,5 @@
-Bebella.controller('IndexCtrl', ['$scope', 'RecipeRepository', 'FilterOptions', 'CurrentFeed',
-    function ($scope, RecipeRepository, FilterOptions, CurrentFeed) {
+Bebella.controller('IndexCtrl', ['$scope', 'RecipeRepository', 'FilterOptions',
+    function ($scope, RecipeRepository, FilterOptions) {
 
         $scope.appUrl = APP_URL;
         $scope.moreDataCanBeLoaded = true;

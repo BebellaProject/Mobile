@@ -1,6 +1,11 @@
 <ion-view on-swipe-left="changeTab('tabs.subscriptions')" title="Tendências" hide-back-button="true" id="page6" class=" ">
     <ion-content padding="true" class="has-header">
-        <div ng-repeat="recipe in recipes" class="list card bm-no-margin-top" id="recipe-card-{{$index}}">
+        <ion-refresher
+            pulling-text="Atualizar tendências"
+            on-refresh="refresh()">
+        </ion-refresher>
+        
+        <div ng-repeat="recipe in trendingRecipes" class="list card bm-no-margin-top" id="recipe-card-{{$index}}">
             <ion-item id="beleza-list-item8" class="  ">{{recipe.name}}
                 <span class="item-note">{{ recipe.created_at }}</span>
             </ion-item>
@@ -18,5 +23,11 @@
                 </p>
             </ion-item>
         </div>
+        
+        <ion-infinite-scroll
+            ng-if="moreDataCanBeLoaded"
+            on-infinite="nextPage()"
+            distance="70%">
+        </ion-infinite-scroll>
     </ion-content>
 </ion-view>

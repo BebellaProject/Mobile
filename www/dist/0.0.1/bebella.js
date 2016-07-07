@@ -124,36 +124,6 @@ Bebella.service('AuthUser', ['$q', '$localStorage',
 ]);
 
 
-Bebella.service('CurrentFeed', ['$q', '$sessionStorage',
-    function ($q, $sessionStorage) {
-        var service = this;
-        
-        service.get = function () {
-            var deferred = $q.defer();
-            
-            var _feed = $sessionStorage.feed;
-            
-            if (_feed) {
-                deferred.resolve(_feed);
-            } else {
-                deferred.reject("Feed não salvo");
-            }
-            
-            return deferred.promise;
-        };
-    
-        service.set = function (feed) {
-            $sessionStorage.feed = feed;
-        };
-    
-        service.destroy = function () {
-            $sessionStorage.$reset();
-        };
-    
-    }
-]);
-
-
 Bebella.service('FilterOptions', ['$q', '$localStorage',
     function ($q, $localStorage) {
         var service = this;
@@ -387,6 +357,38 @@ Bebella.service('RecipeRepository', ['$http', '$q', 'Recipe', 'AuthUser',
             return deferred.promise;
         };
         
+        repository.trendingWithFilters = function (page, filters) {
+            var deferred = $q.defer();
+            
+            var data = JSON.stringify(filters);
+            
+            AuthUser.get().then(
+                function onSuccess (auth) {
+                    $http.post(api_v1("recipe/trendingWithFilters/" + page, auth.api_token), data).then(
+                        function (res) {
+                            var recipes = _.map(res.data.data, function (json) {
+                                var recipe = new Recipe();
+
+                                attr(recipe, json);
+
+                                return recipe;
+                            });
+
+                            deferred.resolve(recipes);
+                        },
+                        function (res) {
+                            deferred.reject(res);
+                        }
+                    );
+                },
+                function onError (err) {
+                    console.log(err);
+                }
+            );            
+            
+            return deferred.promise;
+        };
+        
         repository.all = function () {
             var deferred = $q.defer();
             
@@ -562,8 +564,8 @@ Bebella.controller('FilterIndexCtrl', ['$scope', 'FilterOptions',
 ]);
 
 
-Bebella.controller('IndexCtrl', ['$scope', 'RecipeRepository', 'FilterOptions', 'CurrentFeed',
-    function ($scope, RecipeRepository, FilterOptions, CurrentFeed) {
+Bebella.controller('IndexCtrl', ['$scope', 'RecipeRepository', 'FilterOptions',
+    function ($scope, RecipeRepository, FilterOptions) {
 
         $scope.appUrl = APP_URL;
         $scope.moreDataCanBeLoaded = true;
@@ -742,19 +744,84 @@ Bebella.controller('TabsCtrl', ['$scope','$state',
 ]);
 
 
-Bebella.controller('TrendingIndexCtrl', ['$scope', 'RecipeRepository',
-    function ($scope, RecipeRepository) {
+Bebella.controller('TrendingIndexCtrl', ['$scope', 'RecipeRepository', 'FilterOptions',
+    function ($scope, RecipeRepository, FilterOptions) {
         
         $scope.appUrl = APP_URL;
+        $scope.moreDataCanBeLoaded = true;
+        var current_page = 1;
         
-        RecipeRepository.trending().then(
-            function onSuccess (list) {
-                $scope.recipes = list;
-            },
-            function onError (res) {
-                alert("Houve um erro na obtenção da lista de tendências");
-            }
+        $scope.refresh = function () {
+            $scope.moreDataCanBeLoaded = true;
+            
+            FilterOptions.get().then(
+                    function onSuccess(options) {
+                        current_page = 1;
+
+                        RecipeRepository.trendingWithFilters(current_page, options).then(
+                                function onSuccess(recipes) {
+                                    $scope.trendingRecipes = recipes;
+
+                                    $scope.$broadcast('scroll.refreshComplete');
+                                },
+                                function onError(res) {
+                                    alert("Não foi possível obter o feed.");
+                                }
+                        );
+                    },
+                    function onError(res) {
+                        alert("Erro ao obter os filtros do usuário");
+                    }
+            );
+        };
+
+        $scope.nextPage = function () {
+            current_page += 1;
+
+            FilterOptions.get().then(
+                    function onSuccess(options) {
+                        RecipeRepository.paginateWithFilters(current_page, options).then(
+                                function onSuccess(recipes) {
+                                    if (recipes.length == 0) {
+                                        $scope.moreDataCanBeLoaded = false;
+                                    } else {
+                                        $scope.trendingRecipes.push.apply($scope.trendingRecipes, recipes);  
+                                    }
+                                    
+                                    $scope.$broadcast('scroll.infiniteScrollComplete');
+                                },
+                                function onError() {
+                                    alert("Erro ao obter próxima página");
+                                }
+                        );
+                    },
+                    function onError(res) {
+                        alert("Erro ao obter os filtros do usuário");
+                    }
+            );
+        };
+        
+
+        FilterOptions.get().then(
+                function onSuccess(options) {
+                    RecipeRepository.paginateWithFilters(current_page, options).then(
+                            function onSuccess(recipes) {
+                                $scope.trendingRecipes = recipes;
+                            },
+                            function onError(res) {
+                                alert("Não foi possível obter o feed.");
+                            }
+                    );
+                },
+                function onError(res) {
+                    alert("Falha ao obter os filtros");
+                }
         );
+
+        $scope.$on('$stateChangeSuccess', function () {
+            $scope.nextPage();
+        });
+
         
     }
 ]);

@@ -60,6 +60,38 @@ Bebella.service('RecipeRepository', ['$http', '$q', 'Recipe', 'AuthUser',
             return deferred.promise;
         };
         
+        repository.trendingWithFilters = function (page, filters) {
+            var deferred = $q.defer();
+            
+            var data = JSON.stringify(filters);
+            
+            AuthUser.get().then(
+                function onSuccess (auth) {
+                    $http.post(api_v1("recipe/trendingWithFilters/" + page, auth.api_token), data).then(
+                        function (res) {
+                            var recipes = _.map(res.data.data, function (json) {
+                                var recipe = new Recipe();
+
+                                attr(recipe, json);
+
+                                return recipe;
+                            });
+
+                            deferred.resolve(recipes);
+                        },
+                        function (res) {
+                            deferred.reject(res);
+                        }
+                    );
+                },
+                function onError (err) {
+                    console.log(err);
+                }
+            );            
+            
+            return deferred.promise;
+        };
+        
         repository.all = function () {
             var deferred = $q.defer();
             
