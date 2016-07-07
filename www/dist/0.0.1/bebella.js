@@ -68,6 +68,26 @@ Bebella.factory('Channel', [
 
 
 
+Bebella.factory('Product', [
+    function () {
+        var Product = new Function();
+        
+        return Product;
+    }
+]);
+
+
+Bebella.factory('ProductOption', [
+    function () {
+        var ProductOption = new Function();
+        
+        return ProductOption;
+    }
+]);
+
+
+
+
 Bebella.factory('Recipe', [
     function () {
         var Recipe = function () {
@@ -291,6 +311,289 @@ Bebella.service('ChannelRepository', ['$http', '$q', 'Channel', 'AuthUser',
         };
     }
 ]);
+
+
+
+
+Bebella.service('ProductRepository', ['$http', '$q', 'Product', 'AuthUser',
+    function ($http, $q, Product, AuthUser) {
+        var repository = this;
+        
+        repository.find = function (id) {
+            var deferred = $q.defer();
+            
+            AuthUser.get().then(
+                function onSuccess (auth) {
+                    $http.get(api_v1('product/find/' + id, auth.api_token)).then(
+                        function (res) {
+                            var product = new Product();
+
+                            attr(product, res.data);
+
+                            deferred.resolve(product);
+                        },
+                        function (res) {
+                            deferred.reject(res);
+                        }
+                    );    
+                },
+                function onError (err) {
+                    console.log(err);
+                }
+            );
+            
+            return deferred.promise;
+        };
+        
+        repository.all = function () {
+            var deferred = $q.defer();
+            
+            AuthUser.get().then(
+                function onSuccess (auth) {
+                    $http.get(api_v1("product/all", auth.api_token)).then(
+                        function (res) {
+                            var products = _.map(res.data, function (json) {
+                                var product = new Product();
+
+                                attr(product, json);
+
+                                return product;
+                            });
+
+                            deferred.resolve(products);
+                        },
+                        function (res) {
+                            deferred.reject(res);
+                        }
+                    );
+                },
+                function onError (err) {
+                    console.log(err);
+                }
+            );
+            
+            return deferred.promise;
+        };
+        
+        repository.edit = function (product) {
+            var deferred = $q.defer();
+            
+            AuthUser.get().then(
+                function onSuccess (auth) {
+                    var data = JSON.stringify(product);
+
+                    $http.post(api_v1("product/edit", auth.api_token), data).then(
+                        function (res) {
+                            deferred.resolve(product);
+                        },
+                        function (res) {
+                            deferred.reject(res);
+                        }
+                    );                    
+                },
+                function onError (err) {
+                    console.log(err);
+                }
+            );
+            
+            return deferred.promise;
+        };
+        
+        repository.save = function (product) {
+            var deferred = $q.defer();
+            
+            AuthUser.get().then(
+                function onSuccess (auth) {
+                    var data = JSON.stringify(product);
+
+                    $http.post(api_v1("product/save", auth.api_token), data).then(
+                        function (res) {
+                            product.id = res.data.id;
+
+                            deferred.resolve(product);
+                        },
+                        function (res) {
+                            deferred.reject(res);
+                        }
+                    );
+                },
+                function onError (err) {
+                    console.log(err);
+                }
+            );
+            
+            return deferred.promise;
+        };
+    }
+]);
+
+
+
+
+Bebella.service('ProductOptionRepository', ['$http', '$q', 'ProductOption', 'AuthUser',
+    function ($http, $q, ProductOption, AuthUser) {
+        var repository = this;
+        
+        repository.find = function (id) {
+            var deferred = $q.defer();
+            
+            AuthUser.get().then(
+                function onSuccess (auth) {
+                    $http.get(api_v1('product_option/find/' + id, auth.api_token)).then(
+                        function (res) {
+                            var product_option = new ProductOption();
+
+                            attr(product_option, res.data);
+
+                            deferred.resolve(product_option);
+                        },
+                        function (res) {
+                            deferred.reject(res);
+                        }
+                    );    
+                },
+                function onError (err) {
+                    console.log(err);
+                }
+            );
+            
+            return deferred.promise;
+        };
+        
+        repository.getStoreUrl = function (id) {
+            var deferred = $q.defer();
+            
+            AuthUser.get().then(
+                function onSuccess (auth) {
+                    $http.get(api_v1('product_option/getStoreUrl/' + id, auth.api_token)).then(
+                        function (res) {
+                            deferred.resolve(res.data);
+                        },
+                        function (res) {
+                            deferred.reject(res);
+                        }
+                    );    
+                },
+                function onError (err) {
+                    console.log(err);
+                }
+            );
+            
+            return deferred.promise;
+        };
+        
+        repository.all = function () {
+            var deferred = $q.defer();
+            
+            AuthUser.get().then(
+                function onSuccess (auth) {
+                    $http.get(api_v1("product_option/all", auth.api_token)).then(
+                        function (res) {
+                            var product_options = _.map(res.data, function (json) {
+                                var product_option = new ProductOption();
+
+                                attr(product_option, json);
+
+                                return product_option;
+                            });
+
+                            deferred.resolve(product_options);
+                        },
+                        function (res) {
+                            deferred.reject(res);
+                        }
+                    );
+                },
+                function onError (err) {
+                    console.log(err);
+                }
+            );
+            
+            return deferred.promise;
+        };
+        
+        repository.byProduct = function (id) {
+            var deferred = $q.defer();
+            
+            AuthUser.get().then(
+                function onSuccess (auth) {
+                    $http.get(api_v1("product_option/byProduct/" + id, auth.api_token)).then(
+                        function (res) {
+                            var product_options = _.map(res.data, function (json) {
+                                var product_option = new ProductOption();
+
+                                attr(product_option, json);
+
+                                return product_option;
+                            });
+
+                            deferred.resolve(product_options);
+                        },
+                        function (res) {
+                            deferred.reject(res);
+                        }
+                    );
+                },
+                function onError (err) {
+                    console.log(err);
+                }
+            );
+            
+            return deferred.promise;
+        };
+        
+        repository.edit = function (product_option) {
+            var deferred = $q.defer();
+            
+            AuthUser.get().then(
+                function onSuccess (auth) {
+                    var data = JSON.stringify(product_option);
+
+                    $http.post(api_v1("product_option/edit", auth.api_token), data).then(
+                        function (res) {
+                            deferred.resolve(product_option);
+                        },
+                        function (res) {
+                            deferred.reject(res);
+                        }
+                    );                    
+                },
+                function onError (err) {
+                    console.log(err);
+                }
+            );
+            
+            return deferred.promise;
+        };
+        
+        repository.save = function (product_option) {
+            var deferred = $q.defer();
+            
+            AuthUser.get().then(
+                function onSuccess (auth) {
+                    var data = JSON.stringify(product_option);
+
+                    $http.post(api_v1("product_option/save", auth.api_token), data).then(
+                        function (res) {
+                            product_option.id = res.data.id;
+
+                            deferred.resolve(product_option);
+                        },
+                        function (res) {
+                            deferred.reject(res);
+                        }
+                    );
+                },
+                function onError (err) {
+                    console.log(err);
+                }
+            );
+            
+            return deferred.promise;
+        };
+    }
+]);
+
 
 
 
@@ -678,8 +981,39 @@ Bebella.controller('LoginIndexCtrl', ['$scope', '$http', '$state', 'AuthUser', '
 ]);
 
 
-Bebella.controller('ProductOptionListCtrl', ['$scope',
-    function ($scope) {
+Bebella.controller('ProductOptionListCtrl', ['$scope', '$stateParams', 'ProductOptionRepository', 'ProductRepository',
+    function ($scope, $stateParams, ProductOptionRepository, ProductRepository) {
+        
+        $scope.appUrl = APP_URL;
+        
+        $scope.redirectToStore = function (id) {
+            ProductOptionRepository.getStoreUrl(id).then(
+                function onSuccess (url) {
+                    window.open(url, '_blank', 'location=yes');
+                },
+                function onError (res) {
+                    alert("Erro ao obter link para produto");
+                }
+            );
+        };
+        
+        ProductRepository.find($stateParams.productId).then(
+            function onSuccess (product) {
+                $scope.product = product;
+            },
+            function onError (res) {
+                alert("Erro ao obter detalhes do produto");
+            }
+        );
+        
+        ProductOptionRepository.byProduct($stateParams.productId).then(
+            function onSuccess (list) {
+                $scope.product_options = list;
+            },
+            function onError (res) {
+                alert("Houve um erro na obtenção da lista de opções de produto");
+            }
+        );
         
     }
 ]);
