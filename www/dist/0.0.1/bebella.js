@@ -24,9 +24,9 @@ function attr(dest, src) {
 
 Bebella.run(['$ionicPlatform', 'amMoment', 'AuthUser', '$state', 'FilterOptions',
     function ($ionicPlatform, amMoment, AuthUser, $state, FilterOptions) {
-        
+
         amMoment.changeLocale('pt-br');
-        
+
         $ionicPlatform.ready(function () {
 
             if (window.cordova && window.cordova.plugins && window.cordova.plugins.Keyboard) {
@@ -36,22 +36,22 @@ Bebella.run(['$ionicPlatform', 'amMoment', 'AuthUser', '$state', 'FilterOptions'
             if (window.StatusBar) {
                 StatusBar.styleDefault();
             }
-            
+
             AuthUser.get().then(
-                function onSuccess(user) {
-                    FilterOptions.get().then(
-                        function onSuccess (opts) {
-                        },
-                        function onError (res) {
-                            FilterOptions.setDefault();
-                        }
-                    );
-                    
-                    $state.go('tabs.home');
-                },
-                function onError (err) {
-                    $state.go('login');
-                }
+                    function onSuccess(user) {
+                        $state.go('tabs.home');
+                    },
+                    function onError(err) {
+                        $state.go('login');
+                    }
+            );
+
+            FilterOptions.get().then(
+                    function onSuccess(opts) {
+                    },
+                    function onError(res) {
+                        FilterOptions.setDefault();
+                    }
             );
         });
     }
@@ -460,12 +460,12 @@ Bebella.service('ProductOptionRepository', ['$http', '$q', 'ProductOption', 'Aut
             return deferred.promise;
         };
         
-        repository.getStoreUrl = function (id) {
+        repository.getStoreUrl = function (id, recipe_id) {
             var deferred = $q.defer();
             
             AuthUser.get().then(
                 function onSuccess (auth) {
-                    $http.get(api_v1('product_option/getStoreUrl/' + id, auth.api_token)).then(
+                    $http.get(api_v1('product_option/getStoreUrl/' + id, auth.api_token) + '&recipe_id=' + recipe_id).then(
                         function (res) {
                             deferred.resolve(res.data);
                         },
@@ -512,12 +512,12 @@ Bebella.service('ProductOptionRepository', ['$http', '$q', 'ProductOption', 'Aut
             return deferred.promise;
         };
         
-        repository.byProduct = function (id) {
+        repository.byProduct = function (id, recipe_id) {
             var deferred = $q.defer();
             
             AuthUser.get().then(
                 function onSuccess (auth) {
-                    $http.get(api_v1("product_option/byProduct/" + id, auth.api_token)).then(
+                    $http.get(api_v1("product_option/byProduct/" + id, auth.api_token) + '&recipe_id=' + recipe_id).then(
                         function (res) {
                             var product_options = _.map(res.data, function (json) {
                                 var product_option = new ProductOption();
@@ -987,9 +987,9 @@ Bebella.controller('ProductOptionListCtrl', ['$scope', '$stateParams', 'ProductO
         $scope.appUrl = APP_URL;
         
         $scope.redirectToStore = function (id) {
-            ProductOptionRepository.getStoreUrl(id).then(
+            ProductOptionRepository.getStoreUrl(id, $stateParams.recipeId).then(
                 function onSuccess (url) {
-                    window.open(url, '_blank', 'location=yes');
+                    window.open(url, '_system', 'location=yes');
                 },
                 function onError (res) {
                     alert("Erro ao obter link para produto");
@@ -1006,7 +1006,7 @@ Bebella.controller('ProductOptionListCtrl', ['$scope', '$stateParams', 'ProductO
             }
         );
         
-        ProductOptionRepository.byProduct($stateParams.productId).then(
+        ProductOptionRepository.byProduct($stateParams.productId, $stateParams.recipeId).then(
             function onSuccess (list) {
                 $scope.product_options = list;
             },
@@ -1043,8 +1043,18 @@ Bebella.controller('RegisterIndexCtrl', ['$scope',
     }
 ]);
 
-Bebella.controller('SideMenuCtrl', ['$scope',
-    function ($scope) {
+Bebella.controller('SideMenuCtrl', ['$scope', 'AuthUser',
+    function ($scope, AuthUser) {
+        
+        $scope.appUrl = APP_URL;
+        
+        AuthUser.get().then(
+            function onSuccess (user) {
+                $scope.user = user;
+            },
+            function onError () {
+            }
+        );
         
     }
 ]);
@@ -1138,7 +1148,7 @@ Bebella.controller('TrendingIndexCtrl', ['$scope', 'RecipeRepository', 'FilterOp
 
         FilterOptions.get().then(
                 function onSuccess(options) {
-                    RecipeRepository.paginateWithFilters(current_page, options).then(
+                    RecipeRepository.trendingWithFilters(current_page, options).then(
                             function onSuccess(recipes) {
                                 $scope.trendingRecipes = recipes;
                             },
@@ -1164,7 +1174,7 @@ Bebella.controller('TrendingIndexCtrl', ['$scope', 'RecipeRepository', 'FilterOp
 Bebella.config(['$stateProvider', '$urlRouterProvider',
     function ($stateProvider, $urlRouterProvider) {
 
-            $urlRouterProvider.otherwise('/tabs/home');
+            $urlRouterProvider.otherwise('/login');
 
             $stateProvider
 
@@ -1234,7 +1244,7 @@ Bebella.config(['$stateProvider', '$urlRouterProvider',
                     })
                     
                     .state('product_option_list', {
-                        url: '/product/{productId}/options',
+                        url: '/recipe/{recipeId}/product/{productId}/options',
                         templateUrl: view('product/option/list'),
                         controller: 'ProductOptionListCtrl'
                     });

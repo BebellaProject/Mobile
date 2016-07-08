@@ -4,7 +4,7 @@ Bebella.controller('ProductOptionListCtrl', ['$scope', '$stateParams', 'ProductO
         $scope.appUrl = APP_URL;
         
         $scope.redirectToStore = function (id) {
-            ProductOptionRepository.getStoreUrl(id).then(
+            ProductOptionRepository.getStoreUrl(id, $stateParams.recipeId).then(
                 function onSuccess (url) {
                     window.open(url, '_system', 'location=yes');
                 },
@@ -23,7 +23,7 @@ Bebella.controller('ProductOptionListCtrl', ['$scope', '$stateParams', 'ProductO
             }
         );
         
-        ProductOptionRepository.byProduct($stateParams.productId).then(
+        ProductOptionRepository.byProduct($stateParams.productId, $stateParams.recipeId).then(
             function onSuccess (list) {
                 $scope.product_options = list;
             },

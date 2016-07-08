@@ -1,7 +1,7 @@
 Bebella.config(['$stateProvider', '$urlRouterProvider',
     function ($stateProvider, $urlRouterProvider) {
 
-            $urlRouterProvider.otherwise('/tabs/home');
+            $urlRouterProvider.otherwise('/login');
 
             $stateProvider
 
@@ -71,7 +71,7 @@ Bebella.config(['$stateProvider', '$urlRouterProvider',
                     })
                     
                     .state('product_option_list', {
-                        url: '/product/{productId}/options',
+                        url: '/recipe/{recipeId}/product/{productId}/options',
                         templateUrl: view('product/option/list'),
                         controller: 'ProductOptionListCtrl'
                     });

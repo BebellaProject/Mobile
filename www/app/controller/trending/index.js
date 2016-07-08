@@ -58,7 +58,7 @@ Bebella.controller('TrendingIndexCtrl', ['$scope', 'RecipeRepository', 'FilterOp
 
         FilterOptions.get().then(
                 function onSuccess(options) {
-                    RecipeRepository.paginateWithFilters(current_page, options).then(
+                    RecipeRepository.trendingWithFilters(current_page, options).then(
                             function onSuccess(recipes) {
                                 $scope.trendingRecipes = recipes;
                             },

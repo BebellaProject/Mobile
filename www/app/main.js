@@ -24,9 +24,9 @@ function attr(dest, src) {
 
 Bebella.run(['$ionicPlatform', 'amMoment', 'AuthUser', '$state', 'FilterOptions',
     function ($ionicPlatform, amMoment, AuthUser, $state, FilterOptions) {
-        
+
         amMoment.changeLocale('pt-br');
-        
+
         $ionicPlatform.ready(function () {
 
             if (window.cordova && window.cordova.plugins && window.cordova.plugins.Keyboard) {
@@ -36,22 +36,22 @@ Bebella.run(['$ionicPlatform', 'amMoment', 'AuthUser', '$state', 'FilterOptions'
             if (window.StatusBar) {
                 StatusBar.styleDefault();
             }
-            
+
             AuthUser.get().then(
-                function onSuccess(user) {
-                    FilterOptions.get().then(
-                        function onSuccess (opts) {
-                        },
-                        function onError (res) {
-                            FilterOptions.setDefault();
-                        }
-                    );
-                    
-                    $state.go('tabs.home');
-                },
-                function onError (err) {
-                    $state.go('login');
-                }
+                    function onSuccess(user) {
+                        $state.go('tabs.home');
+                    },
+                    function onError(err) {
+                        $state.go('login');
+                    }
+            );
+
+            FilterOptions.get().then(
+                    function onSuccess(opts) {
+                    },
+                    function onError(res) {
+                        FilterOptions.setDefault();
+                    }
             );
         });
     }

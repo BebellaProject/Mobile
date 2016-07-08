@@ -28,12 +28,12 @@ Bebella.service('ProductOptionRepository', ['$http', '$q', 'ProductOption', 'Aut
             return deferred.promise;
         };
         
-        repository.getStoreUrl = function (id) {
+        repository.getStoreUrl = function (id, recipe_id) {
             var deferred = $q.defer();
             
             AuthUser.get().then(
                 function onSuccess (auth) {
-                    $http.get(api_v1('product_option/getStoreUrl/' + id, auth.api_token)).then(
+                    $http.get(api_v1('product_option/getStoreUrl/' + id, auth.api_token) + '&recipe_id=' + recipe_id).then(
                         function (res) {
                             deferred.resolve(res.data);
                         },
@@ -80,12 +80,12 @@ Bebella.service('ProductOptionRepository', ['$http', '$q', 'ProductOption', 'Aut
             return deferred.promise;
         };
         
-        repository.byProduct = function (id) {
+        repository.byProduct = function (id, recipe_id) {
             var deferred = $q.defer();
             
             AuthUser.get().then(
                 function onSuccess (auth) {
-                    $http.get(api_v1("product_option/byProduct/" + id, auth.api_token)).then(
+                    $http.get(api_v1("product_option/byProduct/" + id, auth.api_token) + '&recipe_id=' + recipe_id).then(
                         function (res) {
                             var product_options = _.map(res.data, function (json) {
                                 var product_option = new ProductOption();
