@@ -45,7 +45,7 @@
         <script src="lib/angular-moment/angular-moment.min.js"></script>
         <script src="lib/ngstorage/ngStorage.min.js"></script>
 
-        <script src="dist/0.0.1/bebella.js"></script>
+        <script src="dist/0.0.2/bebella.js"></script>
 
         <!-- Only required for Tab projects w/ pages in multiple tabs 
         <script src="lib/ionicuirouter/ionicUIRouter.js"></script>
@@ -54,16 +54,18 @@
     </head>
     <body ng-app="Bebella" animation="slide-left-right-ios7">
         <div >
-            <ion-side-menus enable-menu-with-back-views="true" data-componentid="side-menu21">
+            <ion-side-menus enable-menu-with-back-views="true" data-componentid="side-menu21" >
                 <ion-side-menu-content drag-content="false" >
                     <ion-nav-bar class="bar-royal">
                         <ion-nav-back-button></ion-nav-back-button>
                         <ion-nav-buttons side="left">
                             <button class="button button-icon button-clear ion-navicon" menu-toggle="left"></button>
                         </ion-nav-buttons>
-                        <ion-nav-buttons side="right">
-                            <button class="button button-icon button-clear ion-ios-search" menu-toggle="left"></button>
+                    
+                        <ion-nav-buttons side="right" >
+                            <button class="button button-icon button-clear ion-ios-search" ui-sref="search_feed"></button>
                         </ion-nav-buttons>
+                        
                     </ion-nav-bar>
                     <ion-nav-view></ion-nav-view>
                 </ion-side-menu-content>

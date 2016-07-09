@@ -72,10 +72,6 @@ Bebella.controller('TrendingIndexCtrl', ['$scope', 'RecipeRepository', 'FilterOp
                 }
         );
 
-        $scope.$on('$stateChangeSuccess', function () {
-            $scope.nextPage();
-        });
-
         
     }
 ]);

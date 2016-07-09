@@ -1,6 +1,6 @@
 {
   "name": "bebella",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Mobile: An Ionic project",
   "dependencies": {
     "gulp": "^3.5.6",

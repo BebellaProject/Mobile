@@ -64,6 +64,12 @@ Bebella.config(['$stateProvider', '$urlRouterProvider',
                         }
                     })
                     
+                    .state('search_feed', {
+                        url: '/search_feed',
+                        templateUrl: view('search_feed/index'),
+                        controller: 'SearchFeedIndexCtrl'
+                    })
+                    
                     .state('recipe', {
                         url: '/recipe/{recipeId}',
                         templateUrl: view('recipe/index'),

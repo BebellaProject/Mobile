@@ -143,3 +143,7 @@
 .bebella-menu ion-item {
     border: 0px;
 }
+
+.bebella-white-text {
+    color: white !important;
+}

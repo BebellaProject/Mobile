@@ -1,6 +1,6 @@
 var Bebella = angular.module('Bebella', ['ionic', 'angularMoment', 'ngStorage']);
 
-var APP_URL = "http://104.131.103.214";
+var APP_URL = "http://localhost:8000";
 
 function view(path) {
     return "views/" + path + ".html";
@@ -805,6 +805,50 @@ Bebella.service('RecipeRepository', ['$http', '$q', 'Recipe', 'AuthUser',
 ]);
 
 
+Bebella.service('SearchRepository', ['$http', '$q', 'Recipe', 'AuthUser',
+    function ($http, $q, Recipe, AuthUser) {
+        var repository = this;
+        
+        repository.searchRecipe = function (term, page) {
+            var deferred = $q.defer();
+            
+            var data = JSON.stringify({
+                term: term,
+                page: page
+            });
+            
+            AuthUser.get().then(
+                function onSuccess (auth) {
+                    $http.post(api_v1("search/recipe", auth.api_token), data).then(
+                        function (res) {
+                            var recipes = _.map(res.data.result, function (json) {
+                                var recipe = new Recipe();
+
+                                attr(recipe, json);
+
+                                return recipe;
+                            });
+
+                            deferred.resolve(recipes);
+                        },
+                        function (res) {
+                            deferred.reject(res);
+                        }
+                    );
+                },
+                function onError (err) {
+                    console.log(err);
+                }
+            );            
+            
+            return deferred.promise;
+        };
+    }
+]);
+
+
+
+
 Bebella.service('UserRepository', ['$http', '$q', 'User',
     function ($http, $q, User) {
         var repository = this;
@@ -942,9 +986,6 @@ Bebella.controller('IndexCtrl', ['$scope', 'RecipeRepository', 'FilterOptions',
                 }
         );
 
-        $scope.$on('$stateChangeSuccess', function () {
-            $scope.nextPage();
-        });
 
     }
 ]);
@@ -1042,6 +1083,65 @@ Bebella.controller('RegisterIndexCtrl', ['$scope',
         
     }
 ]);
+
+Bebella.controller('SearchFeedIndexCtrl', ['$scope', '$timeout', 'SearchRepository',
+    function ($scope, $timeout, SearchRepository) {
+
+        $scope.results = new Array();
+
+        $scope.appUrl = APP_URL;
+        $scope.moreDataCanBeLoaded = true;
+
+        var feed_page = 1;
+
+        function doSearch(term, page) {
+            SearchRepository.searchRecipe(term, page).then(
+                    function onSuccess(recipes) {
+                        $scope.results = recipes;
+                    },
+                    function onError(res) {
+                        alert("Erro ao obter resultados");
+                    }
+            );
+        }
+
+        $scope.search = function (term) {
+            if (term.trim() !== '') {
+                feed_page = 1;
+
+                SearchRepository.searchRecipe(term, feed_page).then(
+                        function onSuccess(recipes) {
+                            $scope.results = recipes;
+                        },
+                        function onError(res) {
+                            alert("Erro ao obter resultados");
+                        }
+                );
+            }
+        };
+
+        $scope.nextPage = function (term) {
+            feed_page += 1;
+
+            SearchRepository.searchRecipe(term, feed_page).then(
+                    function onSuccess(recipes) {
+                        if (recipes.length == 0) {
+                            $scope.moreDataCanBeLoaded = false;
+                        } else {
+                            $scope.results.push.apply($scope.results, recipes);
+                        }
+
+                        $scope.$broadcast('scroll.infiniteScrollComplete');
+                    },
+                    function onError(res) {
+                        alert("Erro ao obter resultados");
+                    }
+            );
+        };
+
+    }
+]);
+
 
 Bebella.controller('SideMenuCtrl', ['$scope', 'AuthUser',
     function ($scope, AuthUser) {
@@ -1162,10 +1262,6 @@ Bebella.controller('TrendingIndexCtrl', ['$scope', 'RecipeRepository', 'FilterOp
                 }
         );
 
-        $scope.$on('$stateChangeSuccess', function () {
-            $scope.nextPage();
-        });
-
         
     }
 ]);
@@ -1235,6 +1331,12 @@ Bebella.config(['$stateProvider', '$urlRouterProvider',
                                 controller: 'FilterIndexCtrl'
                             }
                         }
+                    })
+                    
+                    .state('search_feed', {
+                        url: '/search_feed',
+                        templateUrl: view('search_feed/index'),
+                        controller: 'SearchFeedIndexCtrl'
                     })
                     
                     .state('recipe', {

@@ -73,9 +73,6 @@ Bebella.controller('IndexCtrl', ['$scope', 'RecipeRepository', 'FilterOptions',
                 }
         );
 
-        $scope.$on('$stateChangeSuccess', function () {
-            $scope.nextPage();
-        });
 
     }
 ]);
