@@ -1,7 +1,7 @@
 Bebella.config(['$stateProvider', '$urlRouterProvider',
     function ($stateProvider, $urlRouterProvider) {
 
-            $urlRouterProvider.otherwise('/login');
+            $urlRouterProvider.otherwise('/tabs/home');
 
             $stateProvider
 
