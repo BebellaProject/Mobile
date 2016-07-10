@@ -170,7 +170,9 @@ Bebella.service('FilterOptions', ['$q', '$localStorage',
             $localStorage.filter_options = {
                 beauty: true,
                 decoration: true,
-                clothing: true
+                clothing: true,
+                health: true,
+                food: true
             };
         };
     }
@@ -890,6 +892,25 @@ Bebella.service('UserRepository', ['$http', '$q', 'User',
             
             return deferred.promise;
         };
+        
+        repository.register = function (user) {
+            var deferred = $q.defer();
+            
+            var data = JSON.stringify(user);
+            
+            $http.post(APP_URL + "/auth/api_register", data).then(
+                function (res) {
+                    attr(user, res.data);
+                    
+                    deferred.resolve(user);
+                },
+                function (res) {
+                    deferred.reject(res);
+                }
+            );
+            
+            return deferred.promise;
+        };
     }
 ]);
 
@@ -1078,9 +1099,40 @@ Bebella.controller('RecipeIndexCtrl', ['$scope', '$stateParams', 'RecipeReposito
 
 
 
-Bebella.controller('RegisterIndexCtrl', ['$scope',
-    function ($scope) {
+Bebella.controller('RegisterIndexCtrl', ['$scope', '$state', 'User', 'UserRepository', 'AuthUser',
+    function ($scope, $state, User, UserRepository, AuthUser) {
         
+        $scope.user = new User();
+    
+        function check(user) {
+            return true;
+        };
+    
+        $scope.register = function () {
+            if (check($scope.user)) {
+                
+                UserRepository.register($scope.user).then(
+                    function onSuccess (user) {
+                        
+                        UserRepository.login($scope.user).then(
+                            function onSuccess (auth) {
+                                AuthUser.set(auth);
+                                
+                                $state.go('tabs.home');
+                            },
+                            function onError (res) {
+                                alert("Erro durante o login");
+                            }
+                        );
+                        
+                    },
+                    function onError (res) {
+                        alert("Houve um erro no registro, tente novamente.");
+                    }
+                );
+                
+            }
+        };
     }
 ]);
 
@@ -1109,6 +1161,8 @@ Bebella.controller('SearchFeedIndexCtrl', ['$scope', '$timeout', 'SearchReposito
             if (term.trim() !== '') {
                 feed_page = 1;
 
+                $scope.moreDataCanBeLoaded = false;
+                
                 SearchRepository.searchRecipe(term, feed_page).then(
                         function onSuccess(recipes) {
                             $scope.results = recipes;

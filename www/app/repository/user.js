@@ -39,6 +39,25 @@ Bebella.service('UserRepository', ['$http', '$q', 'User',
             
             return deferred.promise;
         };
+        
+        repository.register = function (user) {
+            var deferred = $q.defer();
+            
+            var data = JSON.stringify(user);
+            
+            $http.post(APP_URL + "/auth/api_register", data).then(
+                function (res) {
+                    attr(user, res.data);
+                    
+                    deferred.resolve(user);
+                },
+                function (res) {
+                    deferred.reject(res);
+                }
+            );
+            
+            return deferred.promise;
+        };
     }
 ]);
 

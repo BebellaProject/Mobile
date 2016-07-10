@@ -24,7 +24,9 @@ Bebella.service('FilterOptions', ['$q', '$localStorage',
             $localStorage.filter_options = {
                 beauty: true,
                 decoration: true,
-                clothing: true
+                clothing: true,
+                health: true,
+                food: true
             };
         };
     }
