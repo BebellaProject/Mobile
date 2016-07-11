@@ -1,0 +1,33 @@
+<ion-view on-swipe-left="changeTab('tabs.trending')" 
+          on-swipe-right="changeTab('tabs.filter')" title="Home" 
+          hide-back-button="true" id="page2" class="bebella-color-1-lighten-4">
+    <ion-content padding="true" class="">
+        <ion-refresher
+            pulling-text="Atualizar feed"
+            on-refresh="refresh()">
+        </ion-refresher>
+
+        <div ng-repeat="recipe in recipes" class="list card bm-no-margin-top bebella-card" id="recipe-card-{{$index}}">
+            <div class="item item-image bebella-card-image">
+                <a style="display:block;" ui-sref="recipe({recipeId: {{recipe.id}}})" class="">
+                    <img src="{{appUrl}}/{{recipe.image_path}}" width="100%" height="auto" style="display: block; margin-left: auto; margin-right: auto;">
+                </a>
+            </div>
+            <ion-item class="item-avatar item-icon-right  " id="beleza-list-item12">
+                <img src="{{appUrl}}/{{recipe.channel_image}}">
+                <h2>{{recipe.name}}</h2>
+                <p style="white-space:normal;">
+                    por {{recipe.channel_name}}
+                </p>
+
+            </ion-item>
+            
+        </div>
+
+        <ion-infinite-scroll
+            ng-if="moreDataCanBeLoaded"
+            on-infinite="nextPage()"
+            distance="1%">
+        </ion-infinite-scroll>
+    </ion-content>
+</ion-view>

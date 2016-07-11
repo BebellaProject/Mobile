@@ -1,0 +1,31 @@
+<ion-view title="Procurar Receita" class=" ">
+    <ion-content padding="false" class=" ">
+        <div class="bar bar-header bebella-color-1 item-input-inset">
+            <label class="item-input-wrapper bebella-color-1 ">
+                <i class="icon ion-ios-search placeholder-icon bebella-white-text"></i>
+                <input type="search" ng-model="term" placeholder="Buscar" class="bebella-white-text">
+            </label>
+            <button ng-click="search(term)" class="button button-clear bebella-white-text">
+                Buscar
+            </button>
+        </div>
+
+        <div class="list" >
+
+            <a ng-repeat="recipe in results" class="item item-thumbnail-left" ui-sref="recipe({recipeId: {{recipe.id}}})">
+                <img src="{{appUrl}}/{{recipe.image_path}}">
+                <h2>{{recipe.name}}</h2>
+                <p>por {{recipe.channel_name}}</p>
+            </a>
+
+        </div>
+
+         <ion-infinite-scroll
+            ng-if="moreDataCanBeLoaded && results.length > 0"
+            on-infinite="nextPage('{{term}}')"
+            distance="1%">
+        </ion-infinite-scroll>
+    </ion-content>
+</ion-view>
+
+

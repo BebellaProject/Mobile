@@ -1,0 +1,36 @@
+<ion-view on-swipe-right="changeTab('tabs.home')" 
+          on-swipe-left="changeTab('tabs.subscriptions')" 
+          title="Tendências" hide-back-button="true" id="page6" class="bebella-color-1-lighten-4">
+    <ion-content padding="true" class="has-header">
+        <ion-refresher
+            pulling-text="Atualizar tendências"
+            on-refresh="refresh()">
+        </ion-refresher>
+
+        <div ng-repeat="recipe in trendingRecipes" class="list card bm-no-margin-top bebella-card" id="recipe-card-{{$index}}">
+            <div class=" item item-image">
+                <a style="display:block;" ui-sref="recipe({recipeId: {{recipe.id}}})">
+                    <img src="{{appUrl}}/{{recipe.image_path}}" width="100%" height="auto" style="display: block; margin-left: auto; margin-right: auto;">
+                </a>
+            </div>
+            <ion-item class="item-avatar item-icon-right  " id="beleza-list-item12">
+                <img src="{{appUrl}}/{{recipe.channel_image}}">
+                <h2>{{recipe.name}}</h2>
+                <p style="white-space:normal;">
+                    por {{recipe.channel_name}}
+                </p>
+                <i class="icon ion-heart bebella-text-2 bebella-heart-icon"> 
+                    <span ng-if="recipe.view_count < 10" class="badge badge-assertive bebella-color-2 bebella-heart-icon-text-one">{{ recipe.view_count}}</span>
+                    <span ng-if="recipe.view_count >= 10 && recipe.view_count <= 99" class="badge badge-assertive bebella-color-2 bebella-heart-icon-text-two">{{ recipe.view_count}}</span>
+                    <span ng-if="recipe.view_count >= 100" class="badge badge-assertive bebella-color-2 bebella-heart-icon-text-three">+99</span>
+                </i>
+            </ion-item>
+        </div>
+
+        <ion-infinite-scroll
+            ng-if="moreDataCanBeLoaded"
+            on-infinite="nextPage()"
+            distance="1%">
+        </ion-infinite-scroll>
+    </ion-content>
+</ion-view>

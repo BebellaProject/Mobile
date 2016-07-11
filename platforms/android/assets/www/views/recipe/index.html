@@ -1,0 +1,84 @@
+<ion-view title="{{recipe.name}}" id="page13" class="bebella-color-1-lighten-4">
+    <ion-content  padding="false" class=" manual-remove-top-padding has-header">
+        <div ng-if="recipe" class="">
+            <img src="{{appUrl}}/{{recipe.image_path}}" width="100%" height="auto" style="display: block; margin-left: auto; margin-right: auto;">
+        </div>
+        <ion-list ng-if="recipe"  class=" ">
+            <div class="bebella-heart-icon">
+                <button class="button button-royal">
+                    <i class="icon ion-heart "></i>
+                </button>
+            </div>
+            <ion-item class="item-avatar item-icon-right  " id="beleza-list-item12">
+                <img src="{{appUrl}}/{{recipe.channel_image}}">
+                <h2>{{recipe.name}}</h2>
+                <p style="white-space:normal;">
+                    por {{recipe.channel_name}}
+                </p>
+            </ion-item>
+        </ion-list>
+ 
+        <ion-list ng-if="recipe"  class=" ">
+
+            <div class="item item-body bebella-item">
+                <h3 class="bebella-text-2 bebella-title-3">Descrição</h3>
+                <p style="margin-top:0px;color:#000000;font-size:15px;text-align:justify;" class=" ">
+                    {{recipe.desc}}
+                </p>
+            </div>
+
+            <div class="item item-title bebella-item-title">
+                <h3 class="bebella-text-2 bebella-title-3">Etapas</h3>
+            </div>
+
+            <ion-item ng-repeat="step in recipe.steps" class="item-thumbnail-left bebella-step-item" >
+                <img src="{{appUrl}}/{{step.image_path}}">
+                <h2>Passo {{ step.order}}</h2>
+                <p style="white-space:normal;">{{step.desc}}</p>
+            </ion-item>
+
+            <div class="item item-title bebella-item-title" style="margin-top: 8px;">
+                <h3 class="bebella-text-2 bebella-title-3">Produtos Usados</h3>
+            </div>
+
+            <ion-item ng-repeat="product in recipe.products" class="item-thumbnail-left bebella-step-item"  
+                      ui-sref="product_option_list({recipeId: {{recipe.id}}, productId: {{product.product_id}}})">
+                <img src="{{appUrl}}/{{product.product_image}}">
+                <h2>{{product.product_name}}</h2>
+                <p style="white-space:normal;">{{product.product_desc}}</p>
+            </ion-item>
+
+            <div class="item item-title bebella-item-title" style="margin-top: 8px;">
+                <h3 class="bebella-text-2 bebella-title-3">Receitas Relacionadas</h3>
+            </div>
+
+            <ion-item class="item-thumbnail-left  bebella-step-item" >
+                <h2>reconstrução c/ óleo de coco</h2>
+                <p style="white-space:normal;">recomendado p/ cabelo cacheados</p>
+            </ion-item>
+            <ion-item class="item-thumbnail-left  bebella-step-item" >
+                <h2>hidratação com maizena</h2>
+                <p style="white-space:normal;">hidratação bomba de brilho e maciez</p>
+            </ion-item>
+
+            <ion-item class="item item-body bebella-item ">
+                <h3 class="bebella-text-2 bebella-title-3">Tags</h3>
+
+                <span ng-repeat="tag in recipe.tags">
+                    <a class="bebella-text-4">{{tag.name}}</a>
+                </span>
+            </ion-item>
+
+            <div class="item item-title bebella-item-title" style="margin-top: 8px;">
+                <h3 class="bebella-text-2 bebella-title-3">Comentários</h3>
+            </div>
+
+            <ion-item class="item-thumbnail-left  " >
+                <h2>Usuário C</h2>
+                <p style="white-space:normal;">Caguei...</p>
+            </ion-item>
+
+        </ion-list>
+
+    </ion-content>
+</ion-view>

@@ -1,0 +1,58 @@
+<ion-view on-swipe-right="changeTab('tabs.subscriptions')" on-swipe-left="changeTab('tabs.home')" title="Filtros" hide-back-button="true" >
+    <ion-content padding="false" class="has-header">
+        <ul class="list">
+
+            <li class="item item-toggle">
+                Beleza
+                <label class="toggle toggle-assertive">
+                    <input type="checkbox" ng-model="options.beauty" checked="checked">
+                    <div class="track">
+                        <div class="handle"></div>
+                    </div>
+                </label>
+            </li>
+            
+            <li class="item item-toggle">
+                Culinária
+                <label class="toggle toggle-assertive">
+                    <input type="checkbox" ng-model="options.food" checked="checked">
+                    <div class="track">
+                        <div class="handle"></div>
+                    </div>
+                </label>
+            </li>
+            
+            <li class="item item-toggle">
+                Saúde
+                <label class="toggle toggle-assertive">
+                    <input type="checkbox" ng-model="options.health" checked="checked">
+                    <div class="track">
+                        <div class="handle"></div>
+                    </div>
+                </label>
+            </li>
+            
+            <li class="item item-toggle">
+                Roupas
+                <label class="toggle toggle-assertive">
+                    <input type="checkbox" ng-model="options.clothing" checked="checked">
+                    <div class="track">
+                        <div class="handle"></div>
+                    </div>
+                </label>
+            </li>
+            
+            <li class="item item-toggle">
+                Decoração
+                <label class="toggle toggle-assertive">
+                    <input type="checkbox" ng-model="options.decoration" checked="checked">
+                    <div class="track">
+                        <div class="handle"></div>
+                    </div>
+                </label>
+            </li>
+            
+            
+        </ul>
+    </ion-content>
+</ion-view>

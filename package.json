@@ -1,6 +1,6 @@
 {
   "name": "bebella",
-  "version": "0.0.2",
+  "version": "0.0.4",
   "description": "Mobile: An Ionic project",
   "dependencies": {
     "gulp": "^3.5.6",
@@ -26,5 +26,7 @@
     "cordova-plugin-statusbar",
     "ionic-plugin-keyboard"
   ],
-  "cordovaPlatforms": []
+  "cordovaPlatforms": [
+    "android"
+  ]
 }

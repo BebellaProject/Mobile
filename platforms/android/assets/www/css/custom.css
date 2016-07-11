@@ -1,0 +1,149 @@
+.bm-bg-1 {
+  background-color: #FB2B67; 
+}
+
+.bm-color-white {
+  color: #FFFFFF; 
+}
+
+.bm-no-margin-top {
+    margin-top: 0px;
+}
+
+.tab-item-active {
+  border-bottom: 2px solid #fff; 
+}
+
+.bm-section-title {
+  margin-left: 10px;
+}
+
+.tab-title {
+    font-size: 14px;
+    color: white;
+}
+
+.bebella-color-1 {
+    background-color: #fb2b67 !important;
+}
+
+.bebella-text-1 {
+    color: #fb2b67 !important;
+}
+
+.bebella-color-1-lighten-1 {
+    background-color: #EB5A83 !important;
+}
+
+.bebella-text-1-lighten-1 {
+    color: #EB5A83 !important;
+}
+
+.bebella-color-1-lighten-2 {
+    background-color: #EB7496 !important;
+}
+
+.bebella-text-1-lighten-2 {
+    color: #EB7496 !important;
+}
+
+.bebella-color-1-lighten-3 {
+    background-color: #EFA8BC !important;
+}
+
+.bebella-text-1-lighten-3 {
+    color: #EFA8BC !important;
+}
+
+.bebella-color-1-lighten-4 {
+    background-color: #F6DEE5 !important;
+}
+
+.bebella-text-1-lighten-4 {
+    color: #F6DEE5 !important;
+}
+
+.bebella-color-2 {
+    background-color: #ff6511 !important;
+}
+
+.bebella-text-2 {
+    color: #ff6511 !important;
+}
+
+.bebella-color-3 {
+    background-color: #fd6490 !important;
+}
+
+.bebella-text-3 {
+    color: #fd6490 !important;
+}
+
+.bebella-color-4 {
+    background-color: #bf3154 !important;
+}
+
+.bebella-text-4 {
+    color: #bf3154 !important;
+}
+
+.bebella-heart-icon {
+    right: 5px !important;
+    top: -55px !important;
+    position: absolute;
+}
+
+.bebella-heart-icon button {
+    border-radius: 30px;
+}
+
+.bebella-card {
+    margin-bottom: 10px;
+    border-radius: 0px;
+}
+
+.bebella-toggle {
+    background-color: #ff6511 !important;
+    border-color: #ff6511 !important;
+}
+
+.toggle.toggle-assertive input:checked + .track {
+    border-color: #ff6511 !important;
+    background-color: #ff6511 !important;
+}
+
+.bebella-title-3 {
+    font-size: 15px !important;
+    margin-top: 0px !important;
+    margin-bottom: 10px !important;
+}
+
+.bebella-item {
+    margin: 8px -2px !important;
+}
+
+.bebella-item-title {
+    padding: 10px 0px 0px 12px !important;
+}
+
+.bebella-step-item {
+    border: 1px solid #EFA8BC;
+}
+
+.bebella-recipe-stats {
+    padding-top: 0px;
+    padding-bottom: 5px;
+    border-top: 0px !important;
+}
+
+.bebella-recipe-stats p {
+    margin-top: -3px !important;
+}
+
+.bebella-menu ion-item {
+    border: 0px;
+}
+
+.bebella-white-text {
+    color: white !important;
+}

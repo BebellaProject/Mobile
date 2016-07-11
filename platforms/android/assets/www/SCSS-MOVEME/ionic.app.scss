@@ -1,0 +1,21 @@
+$royal: #FB2B67;
+$ionicons-font-path: "../lib/ionic/fonts" !default;
+@import "../www/lib/ionic/scss";
+.bm-bg-1 {
+	background-color: #FB2B67;
+}
+
+.bm-color-white {
+	color: #FFFFFF;
+}
+
+.bm-tab-item-active {
+	border-bottom: 2px solid #fff;
+}
+
+.bm-section-title {
+	margin: 0px;
+	padding-top: 10px;
+	padding-bottom: 10px;
+}
+
