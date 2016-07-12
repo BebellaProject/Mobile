@@ -1,6 +1,6 @@
 var Bebella = angular.module('Bebella', ['ionic', 'angularMoment', 'ngStorage']);
 
-var APP_URL = "http://localhost:8000";
+var APP_URL = "http://bebella.cc";
 
 function view(path) {
     return "views/" + path + ".html";
@@ -783,6 +783,30 @@ Bebella.service('RecipeRepository', ['$http', '$q', 'Recipe', 'AuthUser',
             return deferred.promise;
         };
         
+        repository.comment = function (id, text) {
+            var deferred = $q.defer();
+
+            AuthUser.get().then(
+                function onSuccess (auth) {
+                    var data = JSON.stringify({text: text});
+
+                    $http.post(api_v1("recipe/comment/" + id, auth.api_token), data).then(
+                         function (res) {
+                             deferred.resolve(res.data);
+                         },
+                         function (res) {
+                             deferred.reject(res);
+                         }
+                    );
+                },
+                function onError (err) {
+                    console.log(err);
+                }
+            );
+            
+            return deferred.promise;
+        };
+        
         repository.save = function (recipe) {
             var deferred = $q.defer();
             
@@ -1049,6 +1073,24 @@ Bebella.controller('LoginIndexCtrl', ['$scope', '$http', '$state', 'AuthUser', '
 ]);
 
 
+Bebella.controller('ProductOptionDetailCtrl', ['$scope', '$stateParams', 'ProductOptionRepository',
+    function ($scope, $stateParams, ProductOptionRepository) {
+        
+        $scope.appUrl = APP_URL;
+        
+        ProductOptionRepository.find($stateParams.productOptionId).then(
+            function onSuccess (option) {
+                $scope.productOption = option;
+            },
+            function onError (res) {
+                alert("Houve um erro na obtenção desta opção de produto.");
+            }
+        );
+        
+    }
+]);
+
+
 Bebella.controller('ProductOptionListCtrl', ['$scope', '$stateParams', 'ProductOptionRepository', 'ProductRepository',
     function ($scope, $stateParams, ProductOptionRepository, ProductRepository) {
         
@@ -1087,8 +1129,8 @@ Bebella.controller('ProductOptionListCtrl', ['$scope', '$stateParams', 'ProductO
 ]);
 
 
-Bebella.controller('RecipeIndexCtrl', ['$scope', '$stateParams', 'RecipeRepository',
-    function ($scope, $stateParams, RecipeRepository) {
+Bebella.controller('RecipeIndexCtrl', ['$scope', '$stateParams', 'RecipeRepository', 'AuthUser',
+    function ($scope, $stateParams, RecipeRepository, AuthUser) {
         
         $scope.appUrl = APP_URL;
         
@@ -1100,6 +1142,21 @@ Bebella.controller('RecipeIndexCtrl', ['$scope', '$stateParams', 'RecipeReposito
                 alert("Erro ao obter os detalhes da receita");
             }
         );
+
+        $scope.comment = function (text) {
+            if (text && text !== "") {
+                RecipeRepository.comment($stateParams.recipeId, text).then(
+                    function onSuccess (comment) {
+                        var n_array = [comment];
+                    
+                        $scope.recipe.comments = n_array.concat($scope.recipe.comments);
+                    },
+                    function onError (res) {
+                        alert("Erro ao enviar comentário");
+                    }
+                );
+            }
+        };
     }
 ]);
 
@@ -1404,6 +1461,12 @@ Bebella.config(['$stateProvider', '$urlRouterProvider',
                         url: '/recipe/{recipeId}',
                         templateUrl: view('recipe/index'),
                         controller: 'RecipeIndexCtrl'
+                    })
+                    
+                    .state('product_option', {
+                        url: '/product/option/{productOptionId}',
+                        templateUrl: view('product/option/detail'),
+                        controller: 'ProductOptionDetailCtrl'
                     })
                     
                     .state('product_option_list', {

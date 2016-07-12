@@ -1,9 +1,9 @@
 <ion-view title="{{recipe.name}}" id="page13" class="bebella-color-1-lighten-4">
     <ion-content  padding="false" class=" manual-remove-top-padding has-header">
-        <div ng-if="recipe" class="">
+        <div ng-show="recipe" class="">
             <img src="{{appUrl}}/{{recipe.image_path}}" width="100%" height="auto" style="display: block; margin-left: auto; margin-right: auto;">
         </div>
-        <ion-list ng-if="recipe"  class=" ">
+        <ion-list ng-show="recipe"  class=" ">
             <div class="bebella-heart-icon">
                 <button class="button button-royal">
                     <i class="icon ion-heart "></i>
@@ -11,19 +11,18 @@
             </div>
             <ion-item class="item-avatar item-icon-right  " id="beleza-list-item12">
                 <img src="{{appUrl}}/{{recipe.channel_image}}">
-                <h2>{{recipe.name}}</h2>
+                <h2 style="overflow: visible; white-space: normal;">{{recipe.name}}</h2>
                 <p style="white-space:normal;">
                     por {{recipe.channel_name}}
                 </p>
             </ion-item>
         </ion-list>
- 
-        <ion-list ng-if="recipe"  class=" ">
+
+        <ion-list ng-show="recipe"  class=" ">
 
             <div class="item item-body bebella-item">
                 <h3 class="bebella-text-2 bebella-title-3">Descrição</h3>
-                <p style="margin-top:0px;color:#000000;font-size:15px;text-align:justify;" class=" ">
-                    {{recipe.desc}}
+                <p style="margin-top:0px;color:#000000;font-size:15px;white-space: pre-line;" class=" " ng-bind-html="recipe.desc">
                 </p>
             </div>
 
@@ -37,7 +36,7 @@
                 <p style="white-space:normal;">{{step.desc}}</p>
             </ion-item>
 
-            <div class="item item-title bebella-item-title" style="margin-top: 8px;">
+            <div ng-show="recipe.products.length > 0" class="item item-title bebella-item-title" style="margin-top: 8px;">
                 <h3 class="bebella-text-2 bebella-title-3">Produtos Usados</h3>
             </div>
 
@@ -48,20 +47,17 @@
                 <p style="white-space:normal;">{{product.product_desc}}</p>
             </ion-item>
 
-            <div class="item item-title bebella-item-title" style="margin-top: 8px;">
+            <div ng-show="recipe.related.length > 0" class="item item-title bebella-item-title" style="margin-top: 8px;">
                 <h3 class="bebella-text-2 bebella-title-3">Receitas Relacionadas</h3>
             </div>
 
-            <ion-item class="item-thumbnail-left  bebella-step-item" >
-                <h2>reconstrução c/ óleo de coco</h2>
-                <p style="white-space:normal;">recomendado p/ cabelo cacheados</p>
-            </ion-item>
-            <ion-item class="item-thumbnail-left  bebella-step-item" >
-                <h2>hidratação com maizena</h2>
-                <p style="white-space:normal;">hidratação bomba de brilho e maciez</p>
+            <ion-item ng-repeat="related in recipe.related" ui-sref="recipe({recipeId: {{ related.id}}})" class="item-thumbnail-left  bebella-step-item" >
+                <img src="{{appUrl}}/{{ related.image_path}}">
+                <h2>{{ related.name}}</h2>
+                <p style="white-space:normal;">por {{ related.channel_name}}</p>
             </ion-item>
 
-            <ion-item class="item item-body bebella-item ">
+            <ion-item ng-show="recipe.tags.length > 0" class="item item-body bebella-item ">
                 <h3 class="bebella-text-2 bebella-title-3">Tags</h3>
 
                 <span ng-repeat="tag in recipe.tags">
@@ -73,9 +69,21 @@
                 <h3 class="bebella-text-2 bebella-title-3">Comentários</h3>
             </div>
 
-            <ion-item class="item-thumbnail-left  " >
-                <h2>Usuário C</h2>
-                <p style="white-space:normal;">Caguei...</p>
+            <div class="list" style="margin-bottom: 0px;">
+                <label class="item item-input">
+                    <textarea ng-model="commentText" ng-trim="true" placeholder="Deixe sua opinião, sugestão, crítica e/ou elogios." style="min-height: 90px;"></textarea>
+                </label>
+            </div>
+
+            <button class="button button-full bebella-color-2" style="color: white; margin: 0px;" ng-click="comment(commentText)">
+                Comentar
+            </button>
+
+            <ion-item class="item item-avatar " ng-repeat="comment in recipe.comments" >
+                <img ng-if="comment.user_image" src="{{appUrl}}/{{ comment.user_image }}">
+                <img ng-if="!comment.user_image" src="{{appUrl}}/storage/images/default/default_user.png">
+                <h2>{{ comment.user_name }}</h2>
+                <p style="white-space:normal;">{{ comment.comment }}</p>
             </ion-item>
 
         </ion-list>

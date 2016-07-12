@@ -147,3 +147,7 @@
 .bebella-white-text {
     color: white !important;
 }
+
+.bm-first-card-fix {
+    margin-top: 10px;
+}
