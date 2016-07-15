@@ -176,6 +176,30 @@ Bebella.service('RecipeRepository', ['$http', '$q', 'Recipe', 'AuthUser',
             return deferred.promise;
         };
         
+        repository.comment = function (id, text) {
+            var deferred = $q.defer();
+
+            AuthUser.get().then(
+                function onSuccess (auth) {
+                    var data = JSON.stringify({text: text});
+
+                    $http.post(api_v1("recipe/comment/" + id, auth.api_token), data).then(
+                         function (res) {
+                             deferred.resolve(res.data);
+                         },
+                         function (res) {
+                             deferred.reject(res);
+                         }
+                    );
+                },
+                function onError (err) {
+                    console.log(err);
+                }
+            );
+            
+            return deferred.promise;
+        };
+        
         repository.save = function (recipe) {
             var deferred = $q.defer();
             

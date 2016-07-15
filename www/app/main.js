@@ -1,6 +1,6 @@
 var Bebella = angular.module('Bebella', ['ionic', 'angularMoment', 'ngStorage']);
 
-var APP_URL = "http://bebella.cc";
+var APP_URL = "http://localhost:8000";
 
 function view(path) {
     return "views/" + path + ".html";

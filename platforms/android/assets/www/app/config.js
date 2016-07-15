@@ -76,6 +76,12 @@ Bebella.config(['$stateProvider', '$urlRouterProvider',
                         controller: 'RecipeIndexCtrl'
                     })
                     
+                    .state('product_option', {
+                        url: '/product/option/{productOptionId}',
+                        templateUrl: view('product/option/detail'),
+                        controller: 'ProductOptionDetailCtrl'
+                    })
+                    
                     .state('product_option_list', {
                         url: '/recipe/{recipeId}/product/{productId}/options',
                         templateUrl: view('product/option/list'),

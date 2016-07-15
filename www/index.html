@@ -54,19 +54,8 @@
     </head>
     <body ng-app="Bebella" animation="slide-left-right-ios7">
         <div >
-            <ion-side-menus enable-menu-with-back-views="true" data-componentid="side-menu21" >
+            <ion-side-menus enable-menu-with-back-views="true" >
                 <ion-side-menu-content drag-content="false" >
-                    <ion-nav-bar class="bar-royal">
-                        <ion-nav-back-button></ion-nav-back-button>
-                        <ion-nav-buttons side="left">
-                            <button class="button button-icon button-clear ion-navicon" menu-toggle="left"></button>
-                        </ion-nav-buttons>
-                    
-                        <ion-nav-buttons side="right" >
-                            <button class="button button-icon button-clear ion-ios-search" ui-sref="search_feed"></button>
-                        </ion-nav-buttons>
-                        
-                    </ion-nav-bar>
                     <ion-nav-view></ion-nav-view>
                 </ion-side-menu-content>
                 <ion-side-menu ng-controller="SideMenuCtrl" side="left">
@@ -74,28 +63,32 @@
                         <div class="title" style="color: #FFF;">Menu</div>
                     </ion-header-bar>
                     <ion-content padding="false" class="side-menu-left has-header">
-                        <ion-list id="menu-list1" class=" " data-componentid="list1">
-                            <ion-item class="item-avatar  " id="menu-list-item1" data-componentid="list-item1">
+                        <ion-list id="menu-list1" class=" " >
+                            <ion-item class="item-avatar  " >
                                 <img src="{{appUrl}}/{{user.image_path}}">
-                                <h2>{{ user.name }}</h2>
+                                <h2>{{ user.name}}</h2>
                                 <p>Meu Perfil</p>
                             </ion-item>
                         </ion-list>
                         <ion-list id="menu-list2" class="bebella-menu " data-componentid="list2">
-                            <ion-item class="item-icon-left  " id="menu-list-item2" ui-sref="tabs.home" menu-close="" data-componentid="list-item2">
-                                <i class="icon ion-ios-home"></i>Home</ion-item>
-                            <ion-item class="item-icon-left  " id="menu-list-item23" ui-sref="wishlist" menu-close="" data-componentid="list-item23">
-                                <i class="icon ion-heart"></i>Lista de Desejos</ion-item>
-                            <ion-item class="item-icon-left  " id="menu-list-item3" ui-sref="minhaSacola" menu-close="" data-componentid="list-item3">
-                                <i class="icon ion-bag"></i>Minha Sacola</ion-item>
-                            <ion-item class="item-icon-left  " id="menu-list-item17" ui-sref="meusPedidos" menu-close="" data-componentid="list-item17">
-                                <i class="icon ion-ios-list-outline"></i>Meus Pedidos</ion-item>
+                            <ion-item class="item-icon-left  " ui-sref="tabs.home" menu-close="" >
+                                <i class="icon ion-ios-home"></i>Home
+                            </ion-item>
+                            <ion-item class="item-icon-left  " ui-sref="wishlist" menu-close="">
+                                <i class="icon ion-heart"></i>Minhas Receitas
+                            </ion-item>
+                            <ion-item class="item-icon-left  " ui-sref="minhaSacola" menu-close="">
+                                <i class="icon ion-star"></i>Lista de Desejos
+                            </ion-item>
                             <ion-item class="item-icon-left  " id="menu-list-item4" data-componentid="list-item4">
-                                <i class="icon ion-gear-a"></i>Confirgurações</ion-item>
+                                <i class="icon ion-gear-a"></i>Confirgurações
+                            </ion-item>
                             <ion-item class="item-icon-left  " id="menu-list-item5" data-componentid="list-item5">
-                                <i class="icon ion-information-circled"></i>Sobre</ion-item>
+                                <i class="icon ion-information-circled"></i>Sobre
+                            </ion-item>
                             <ion-item class="item-icon-left  " id="menu-list-item6" data-componentid="list-item6">
-                                <i class="icon ion-android-arrow-back"></i>Sair</ion-item>
+                                <i class="icon ion-android-arrow-back"></i>Sair
+                            </ion-item>
                         </ion-list>
                     </ion-content>
                 </ion-side-menu>
