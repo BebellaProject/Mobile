@@ -25,7 +25,9 @@
                     por {{recipe.channel_name}}
                 </p>
                 <div style="position: absolute; top: 0px; right: 0px;">
-                    <button class="button button-icon button-clear ion-heart " style="font-size: 25px !important;" ></button>
+                    <button ng-show="!recipe.is_liked" class="button button-icon button-clear ion-heart " ng-click="likeIt()" style="font-size: 25px !important;" ></button>
+                    <button ng-show="recipe.is_liked" class="button button-icon button-clear ion-heart bebella-is-liked" ng-click="dislikeIt()" style="font-size: 25px !important;"></button>
+
                     <button class="button button-icon button-clear ion-android-share-alt" style="color: black; font-size: 25px !important;" ></button>
                     <button class="button button-icon button-clear ion-android-more-vertical" style="color: black; font-size: 30px !important;" ></button>
                 </div>
@@ -80,16 +82,18 @@
             </ion-item>
 
             <div class="item item-title bebella-item-title" style="margin-top: 8px;">
-                <h3 class="bebella-text-2 bebella-title-3">Comentários</h3>
+                <h3 class="bebella-text-2 bebella-title-3">Comentários
+                    <a ng-show="has_commented" ng-click="has_commented = false; commentText = '';" class="icon ion-plus-round bebella-text-4" style="float: right; margin-right: 10px;"></a>
+                </h3>
             </div>
 
-            <div class="list" style="margin-bottom: 0px;">
+            <div ng-show="!has_commented" class="list" style="margin-bottom: 0px;">
                 <label class="item item-input">
                     <textarea ng-model="commentText" ng-trim="true" placeholder="Deixe sua opinião, sugestão, crítica e/ou elogios." style="min-height: 90px;"></textarea>
                 </label>
             </div>
 
-            <button class="button button-full bebella-color-2" style="color: white; margin: 0px;" ng-click="comment(commentText)">
+            <button ng-show="!has_commented" class="button button-full bebella-color-2" style="color: white; margin: 0px;" ng-click="comment(commentText)">
                 Comentar
             </button>
 

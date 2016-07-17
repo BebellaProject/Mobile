@@ -1,0 +1,26 @@
+﻿<ion-view title="Meus Favoritos" class=" ">
+    
+    <ion-nav-bar class="bar-royal">
+        <ion-nav-back-button></ion-nav-back-button>
+        <ion-nav-buttons side="left">
+            <button class="button button-icon button-clear ion-navicon" menu-toggle="left"></button>
+        </ion-nav-buttons>
+        <ion-nav-title></ion-nav-title>
+        <ion-nav-buttons side="right">
+        </ion-nav-buttons>
+    </ion-nav-bar>
+    
+    <ion-content padding="false" class=" ">
+        
+        <ion-list class="">
+            
+            <a ng-repeat="recipe in favorites" class="item item-thumbnail-left" ui-sref="recipe({recipeId: {{recipe.id}}})">
+                <img src="{{appUrl}}/{{recipe.image_path}}">
+                <h2>{{recipe.name}}</h2>
+                <p>por {{recipe.channel_name}}</p>
+            </a>
+
+        </ion-list>
+
+    </ion-content>
+</ion-view>

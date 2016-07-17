@@ -1,20 +1,36 @@
-<ion-view title="{{recipe.name}}" id="page13" class="bebella-color-1-lighten-4">
+<ion-view id="page13" class="bebella-color-1-lighten-4">
+
+    <ion-nav-bar class="bar-royal">
+        <ion-nav-back-button></ion-nav-back-button>
+        <ion-nav-buttons side="left">
+            <button class="button button-icon button-clear ion-navicon" menu-toggle="left"></button>
+        </ion-nav-buttons>
+
+        <ion-nav-title>{{ recipe.name }}</ion-nav-title>
+
+        <ion-nav-buttons side="right" >
+        </ion-nav-buttons>
+    </ion-nav-bar>
+
     <ion-content  padding="false" class=" manual-remove-top-padding has-header">
         <div ng-show="recipe" class="">
             <img src="{{appUrl}}/{{recipe.image_path}}" width="100%" height="auto" style="display: block; margin-left: auto; margin-right: auto;">
         </div>
-        <ion-list ng-show="recipe"  class=" ">
-            <div class="bebella-heart-icon">
-                <button class="button button-royal">
-                    <i class="icon ion-heart "></i>
-                </button>
-            </div>
-            <ion-item class="item-avatar item-icon-right  " id="beleza-list-item12">
+
+        <ion-list ng-show="recipe" >
+            <ion-item class="item-avatar item-icon-right  " style="border-top: 0px;">
                 <img src="{{appUrl}}/{{recipe.channel_image}}">
                 <h2 style="overflow: visible; white-space: normal;">{{recipe.name}}</h2>
                 <p style="white-space:normal;">
                     por {{recipe.channel_name}}
                 </p>
+                <div style="position: absolute; top: 0px; right: 0px;">
+                    <button ng-show="!recipe.is_liked" class="button button-icon button-clear ion-heart " ng-click="likeIt()" style="font-size: 25px !important;" ></button>
+                    <button ng-show="recipe.is_liked" class="button button-icon button-clear ion-heart bebella-is-liked" ng-click="dislikeIt()" style="font-size: 25px !important;"></button>
+
+                    <button class="button button-icon button-clear ion-android-share-alt" style="color: black; font-size: 25px !important;" ></button>
+                    <button class="button button-icon button-clear ion-android-more-vertical" style="color: black; font-size: 30px !important;" ></button>
+                </div>
             </ion-item>
         </ion-list>
 
@@ -66,24 +82,26 @@
             </ion-item>
 
             <div class="item item-title bebella-item-title" style="margin-top: 8px;">
-                <h3 class="bebella-text-2 bebella-title-3">Comentários</h3>
+                <h3 class="bebella-text-2 bebella-title-3">Comentários
+                    <a ng-show="has_commented" ng-click="has_commented = false; commentText = '';" class="icon ion-plus-round bebella-text-4" style="float: right; margin-right: 10px;"></a>
+                </h3>
             </div>
 
-            <div class="list" style="margin-bottom: 0px;">
+            <div ng-show="!has_commented" class="list" style="margin-bottom: 0px;">
                 <label class="item item-input">
                     <textarea ng-model="commentText" ng-trim="true" placeholder="Deixe sua opinião, sugestão, crítica e/ou elogios." style="min-height: 90px;"></textarea>
                 </label>
             </div>
 
-            <button class="button button-full bebella-color-2" style="color: white; margin: 0px;" ng-click="comment(commentText)">
+            <button ng-show="!has_commented" class="button button-full bebella-color-2" style="color: white; margin: 0px;" ng-click="comment(commentText)">
                 Comentar
             </button>
 
             <ion-item class="item item-avatar " ng-repeat="comment in recipe.comments" >
-                <img ng-if="comment.user_image" src="{{appUrl}}/{{ comment.user_image }}">
+                <img ng-if="comment.user_image" src="{{appUrl}}/{{ comment.user_image}}">
                 <img ng-if="!comment.user_image" src="{{appUrl}}/storage/images/default/default_user.png">
-                <h2>{{ comment.user_name }}</h2>
-                <p style="white-space:normal;">{{ comment.comment }}</p>
+                <h2>{{ comment.user_name}}</h2>
+                <p style="white-space:normal;">{{ comment.comment}}</p>
             </ion-item>
 
         </ion-list>

@@ -1,6 +1,19 @@
 <ion-view on-swipe-left="changeTab('tabs.trending')" 
           on-swipe-right="changeTab('tabs.filter')" title="Home" 
           hide-back-button="true" id="page2" class="bebella-color-1-lighten-4">
+
+    <ion-nav-bar class="bar-royal">
+        <ion-nav-back-button></ion-nav-back-button>
+        <ion-nav-buttons side="left">
+            <button class="button button-icon button-clear ion-navicon" menu-toggle="left"></button>
+        </ion-nav-buttons>
+
+        <ion-nav-buttons side="right" >
+            <button class="button button-icon button-clear ion-ios-search" ui-sref="search_feed"></button>
+        </ion-nav-buttons>
+
+    </ion-nav-bar>
+
     <ion-content padding="true" class="">
         <ion-refresher
             pulling-text="Atualizar feed"
@@ -21,7 +34,7 @@
                 </p>
 
             </ion-item>
-            
+
         </div>
 
         <ion-infinite-scroll

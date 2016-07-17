@@ -64,6 +64,12 @@ Bebella.config(['$stateProvider', '$urlRouterProvider',
                         }
                     })
                     
+                    .state('favorites', {
+                        url: '/favorites',
+                        templateUrl: view('favorite/list'),
+                        controller: 'FavoriteListCtrl'
+                    })
+
                     .state('search_feed', {
                         url: '/search_feed',
                         templateUrl: view('search_feed/index'),

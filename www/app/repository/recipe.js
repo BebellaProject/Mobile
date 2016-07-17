@@ -27,7 +27,7 @@ Bebella.service('RecipeRepository', ['$http', '$q', 'Recipe', 'AuthUser',
             
             return deferred.promise;
         };
-        
+
         repository.paginateWithFilters = function (page, filters) {
             var deferred = $q.defer();
             

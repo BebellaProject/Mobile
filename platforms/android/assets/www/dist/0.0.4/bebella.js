@@ -322,6 +322,89 @@ Bebella.service('ChannelRepository', ['$http', '$q', 'Channel', 'AuthUser',
 
 
 
+Bebella.service('FavoriteRepository', ['$http', '$q', 'Recipe', 'AuthUser',
+    function ($http, $q, Recipe, AuthUser) {
+    	var repository = this;
+
+    	repository.byUser = function () {
+    		var deferred = $q.defer();
+
+    		AuthUser.get().then(
+                function onSuccess(auth) {
+                	$http.get(api_v1("favorite/byUser/" + auth.id, auth.api_token)).then(
+                        function (res) {
+                        	var recipes = _.map(res.data, function (json) {
+                        		var recipe = new Recipe();
+
+                        		attr(recipe, json);
+
+                        		return recipe;
+                        	});
+
+                        	deferred.resolve(recipes);
+                        },
+                        function (res) {
+                        	deferred.reject(res);
+                        }
+                    );
+                },
+                function onError(err) {
+                	console.log(err);
+                }
+            );
+
+    		return deferred.promise;
+    	};
+
+    	repository.add = function (id) {
+    		var deferred = $q.defer();
+
+    		AuthUser.get().then(
+                function onSuccess(auth) {
+                	$http.get(api_v1('favorite/add/' + id, auth.api_token)).then(
+                        function (res) {
+                        	deferred.resolve(res.data);
+                        },
+                        function (res) {
+                        	deferred.reject(res);
+                        }
+                    );
+                },
+                function onError(err) {
+                	console.log(err);
+                }
+            );
+
+    		return deferred.promise;
+    	};
+
+    	repository.remove = function (id) {
+    		var deferred = $q.defer();
+
+    		AuthUser.get().then(
+                function onSuccess(auth) {
+                	$http.get(api_v1('favorite/remove/' + id, auth.api_token)).then(
+                        function (res) {
+                        	deferred.resolve(res.data);
+                        },
+                        function (res) {
+                        	deferred.reject(res);
+                        }
+                    );
+                },
+                function onError(err) {
+                	console.log(err);
+                }
+            );
+
+    		return deferred.promise;
+    	};
+    }
+]);
+
+
+
+
 Bebella.service('ProductRepository', ['$http', '$q', 'Product', 'AuthUser',
     function ($http, $q, Product, AuthUser) {
         var repository = this;
@@ -634,7 +717,7 @@ Bebella.service('RecipeRepository', ['$http', '$q', 'Recipe', 'AuthUser',
             
             return deferred.promise;
         };
-        
+
         repository.paginateWithFilters = function (page, filters) {
             var deferred = $q.defer();
             
@@ -945,6 +1028,23 @@ Bebella.service('UserRepository', ['$http', '$q', 'User',
 
 
 
+Bebella.controller('FavoriteListCtrl', ['$scope', 'FavoriteRepository',
+    function ($scope, FavoriteRepository) {
+        
+        $scope.appUrl = APP_URL;
+
+        FavoriteRepository.byUser().then(
+            function onSuccess(list) {
+                $scope.favorites = list;
+            },
+            function onError(res) {
+                alert("Houve um erro na obtenção dos favoritos.");
+            }
+        );
+
+    }
+]);
+
 Bebella.controller('FilterIndexCtrl', ['$scope', 'FilterOptions',
     function ($scope, FilterOptions) {
         
@@ -1129,10 +1229,11 @@ Bebella.controller('ProductOptionListCtrl', ['$scope', '$stateParams', 'ProductO
 ]);
 
 
-Bebella.controller('RecipeIndexCtrl', ['$scope', '$stateParams', 'RecipeRepository', 'AuthUser',
-    function ($scope, $stateParams, RecipeRepository, AuthUser) {
+Bebella.controller('RecipeIndexCtrl', ['$scope', '$stateParams', 'RecipeRepository', 'AuthUser', 'FavoriteRepository',
+    function ($scope, $stateParams, RecipeRepository, AuthUser, FavoriteRepository) {
         
         $scope.appUrl = APP_URL;
+        $scope.has_commented = false;
         
         RecipeRepository.find($stateParams.recipeId).then(
             function onSuccess (recipe) {
@@ -1143,6 +1244,28 @@ Bebella.controller('RecipeIndexCtrl', ['$scope', '$stateParams', 'RecipeReposito
             }
         );
 
+        $scope.likeIt = function () {
+            FavoriteRepository.add($stateParams.recipeId).then(
+                function onSuccess() {
+                    $scope.recipe.is_liked = true;
+                },
+                function onError(res) {
+                    alert("Erro ao favoritar esta receita");
+                }
+            );
+        };
+
+        $scope.dislikeIt = function () {
+            FavoriteRepository.remove($stateParams.recipeId).then(
+                function onSuccess() {
+                    $scope.recipe.is_liked = false;
+                },
+                function onError(res) {
+                    alert("Erro ao desfavoritar esta receita");
+                }
+            );
+        };
+
         $scope.comment = function (text) {
             if (text && text !== "") {
                 RecipeRepository.comment($stateParams.recipeId, text).then(
@@ -1150,6 +1273,8 @@ Bebella.controller('RecipeIndexCtrl', ['$scope', '$stateParams', 'RecipeReposito
                         var n_array = [comment];
                     
                         $scope.recipe.comments = n_array.concat($scope.recipe.comments);
+
+                        $scope.has_commented = true;
                     },
                     function onError (res) {
                         alert("Erro ao enviar comentário");
@@ -1451,6 +1576,12 @@ Bebella.config(['$stateProvider', '$urlRouterProvider',
                         }
                     })
                     
+                    .state('favorites', {
+                        url: '/favorites',
+                        templateUrl: view('favorite/list'),
+                        controller: 'FavoriteListCtrl'
+                    })
+
                     .state('search_feed', {
                         url: '/search_feed',
                         templateUrl: view('search_feed/index'),
